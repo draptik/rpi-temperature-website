@@ -30,7 +30,7 @@ app.use('/', routes);
 app.use('/users', users);
 
 // adding the REST API
-app.use('/api', rouresApi);
+app.use('/api', routesApi);
 
 
 // catch 404 and forward to error handler
