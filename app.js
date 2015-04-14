@@ -9,7 +9,7 @@ var routes = require('./app_server/routes/index');
 var users = require('./app_server/routes/users');
 
 // adding the REST API
-var routesApi = require('./app_api/routes/index');
+//var routesApi = require('./app_api/routes/index'); 
 
 
 var app = express();
@@ -30,7 +30,7 @@ app.use('/', routes);
 app.use('/users', users);
 
 // adding the REST API
-app.use('/api', routesApi);
+//app.use('/api', routesApi);
 
 
 // catch 404 and forward to error handler
