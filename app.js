@@ -6,7 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./app_server/routes/index');
-var users = require('./app_server/routes/users');
+// var users = require('./app_server/routes/users');
+var temperatures = require('./app_server/routes/temperatures');
 
 // adding the REST API
 //var routesApi = require('./app_api/routes/index'); 
@@ -27,7 +28,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+// app.use('/users', users);
+app.use('/temperatures', temperatures);
 
 // adding the REST API
 //app.use('/api', routesApi);
@@ -40,7 +42,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
+// error handlers ====================================================
 
 // development error handler
 // will print stacktrace

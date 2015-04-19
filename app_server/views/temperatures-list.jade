@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  .row
+    .col-lg-6
+      h1= pageHeader.title
+        small &nbsp;#{pageHeader.strapline}
+  .row
+    .col-cs-12.col-sm-8
+      .error= message
+      .row.list-group
+        each temperature in temperatures
+          .col-xs-12.list-group-item
+            h4
+              a(href="/temperature")= temperature.temp_celsius
+              small &nbsp;
+            p Some text here
