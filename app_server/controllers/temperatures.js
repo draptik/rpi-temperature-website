@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 var renderPage = function (req, res, responseBody) {
 	var message;
 
+	console.log(responseBody);
 	if (!(responseBody instanceof Array)) {
 		message = 'API lookup error';
 		responseBody = [];
@@ -34,10 +35,6 @@ var renderPage = function (req, res, responseBody) {
 
 /* GET temperatures page */
 module.exports.index = function(req, res, next) {
-	// console.log('temperature.index...');
-	// res.render('index', { title: 'Temperatures...' });
-
-
 	var requestOptions, path;
 	path = '/api/temperatures';
 	requestOptions = {
@@ -52,6 +49,7 @@ module.exports.index = function(req, res, next) {
 		if (response.statusCode === 200 && data.length) {
 			console.log('Status code not 200...');
 		}
+
 		renderPage(req, res, data);
 	});
 };
