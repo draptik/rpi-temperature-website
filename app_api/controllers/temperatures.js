@@ -7,6 +7,7 @@ var sendJSONresponse = function(res, status, content) {
 
 module.exports.index = function(req, res) {
 	console.log('API temperatures.index called..');
-	var tempData = temperatureBackend.getAll();
-	sendJSONresponse(res, 200, tempData);
+	temperatureBackend.getAll(function (data) {
+		sendJSONresponse(res, 200, data);
+	});
 };

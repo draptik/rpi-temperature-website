@@ -9,11 +9,9 @@ if (!exists) {
 	console.log('file exists.');
 }
 
-var db = new sqlite3.Database(file).verbose();
+var db = new sqlite3.Database(file);
 
-module.exports.getAll = function () {
-console.log('3');
-	var tempData = [];
+module.exports.getAll = function (callback) {
 	// TODO Replace with DB call:
 	// tempData = [
 	// 	{degreeCelsius: 19.0, sensorName: 'Z2', timestamp: '2015-01-01 12:00:00'},
@@ -36,20 +34,21 @@ console.log('3');
 
 	var sqlQuery = 'SELECT * FROM temps';
 	
-	db.each(sqlQuery, function (err, row) {
+	db.all(sqlQuery, function (err, rows) {
 		if (err !== null) {
 			// TODO Error handling
 			console.log('Error during sql query: ' + err);
 		} else {
-			// TODO Return collection from db as json object.
-			tempData.push({
-				degreeCelsius: row.temp,
-				sensorName: row.ID,
-				timestamp: row.timestamp
-			});
+			var temperatureData = [];
+			for(var i = 0; i < rows.length; i++) {
+				temperatureData.push({
+					degreeCelsius: rows[i].temp,
+					sensorName: rows[i].ID,
+					timestamp: rows[i].timestamp
+				});
+			}
+
+			callback(temperatureData);
 		}
 	});
-
-	return tempData;
 };
-

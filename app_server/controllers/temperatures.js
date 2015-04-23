@@ -21,6 +21,9 @@ var renderPage = function (req, res, responseBody) {
 		}
 	}
 
+	console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+	console.log(responseBody);
+	
 	res.render('temperatures-list', {
 		title: 'Some title',
 		pageHeader: {
@@ -45,10 +48,9 @@ module.exports.index = function(req, res, next) {
 	request(requestOptions, function (err, response, body) {
 		var i, data;
 		data = body;
-		if (response.statusCode === 200 && data.length) {
+		if (response.statusCode !== 200 && data.length) {
 			console.log('Status code not 200...');
 		}
-
 		renderPage(req, res, data);
 	});
 };
