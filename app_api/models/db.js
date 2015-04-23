@@ -9,7 +9,7 @@ if (!exists) {
 	console.log('file exists.');
 }
 
-var db = new sqlite3.Database(file);
+var db = new sqlite3.Database(file).verbose();
 
 module.exports.getAll = function () {
 console.log('3');
