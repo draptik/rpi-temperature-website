@@ -1,6 +1,6 @@
-This a simple demo web application.
+This is a simple demo web application.
 
-Display temperature data recorded with a Raspberry Pi (RPi).
+Only purpose: Display temperature data recorded with a Raspberry Pi (RPi).
 
 This code is intended to run on the same RPi as the data is recorded on.
 
