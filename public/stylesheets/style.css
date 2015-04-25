@@ -1,0 +1,11 @@
+#placeholder .button {
+	position: absolute;
+	cursor: pointer;
+}
+
+#placeholder div.button {
+	font-size: smaller;
+	color: #999;
+	background-color: #eee;
+	padding: 2px;
+}

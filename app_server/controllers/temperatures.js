@@ -24,8 +24,7 @@ var renderPage = function (req, res, responseBody) {
 	res.render('temperatures-list', {
 		title: 'Some title',
 		pageHeader: {
-			title: 'Another title',
-			strapLine: 'Some strapline'
+			title: 'Temperatures'
 		},
 		temperatures: responseBody,
 		message: message
