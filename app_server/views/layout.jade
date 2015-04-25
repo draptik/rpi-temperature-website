@@ -3,8 +3,13 @@ html
   head
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title= title
-    link(rel='stylesheet', href='/bootstrap-3.3.4-dist/css/bootstrap.min.css')
+    
+    // vendor libraries
+    link(rel='stylesheet', href='/vendor/bootstrap-3.3.4-dist/css/bootstrap.min.css')
+
+    // custom stylesheets
     link(rel='stylesheet', href='/stylesheets/style.css')
+    
   body
     .container
       block content
@@ -14,15 +19,18 @@ html
           .col-xs-12
             small &copy; Patrick Drechsler 2015
           
-    script(src='/javascripts/jquery-2.1.3.min.js')
-    script(src='/bootstrap-3.3.4-dist/js/bootstrap.min.js')
-    script(src='/javascripts/moment.js')
+    // basic js libraries
+    script(src='/vendor/jquery-2.1.3.min.js')
+    script(src='/vendor/bootstrap-3.3.4-dist/js/bootstrap.min.js')
+    script(src='/vendor/moment.js')
         
-    script(src='/flot/flot/jquery.flot.min.js')
-    script(src='/flot/flot/jquery.flot.time.min.js')
-    script(src='/flot/flot/jquery.flot.selection.min.js')
-    script(src='/flot/flot/jquery.flot.navigate.min.js')
+    // charting libraries
+    script(src='/vendor/flot/flot/jquery.flot.min.js')
+    script(src='/vendor/flot/flot/jquery.flot.time.min.js')
+    script(src='/vendor/flot/flot/jquery.flot.selection.min.js')
+    script(src='/vendor/flot/flot/jquery.flot.navigate.min.js')
     
+    // custom libraries
     script(src='/javascripts/rest.js')
-    script(src='/javascripts/chartdemo.js')
+    script(src='/javascripts/chart.js')
     
