@@ -6,7 +6,20 @@ html
     link(rel='stylesheet', href='/bootstrap-3.3.4-dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    .container
+      block content
 
+      footer
+        .row
+          .col-xs-12
+            small &copy; Patrick Drechsler 2015
+          
     script(src='/javascripts/jquery-2.1.3.min.js')
     script(src='/bootstrap-3.3.4-dist/js/bootstrap.min.js')
+        
+    script(src='/flot/flot/jquery.flot.min.js')
+    script(src='/flot/flot/jquery.flot.time.min.js')
+    
+    script(src='/javascripts/rest.js')
+    script(src='/javascripts/chartdemo.js')
+    

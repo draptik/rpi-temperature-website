@@ -5,11 +5,4 @@ block content
     .col-lg-6
       h1= pageHeader.title
   .row
-    .col-cs-12.col-sm-8
-      .error= message
-      .row.list-group
-        each temperature in temperatures
-          .col-xs-12.list-group-item
-            h4= temperature.degreeCelsius
-            h5= temperature.timestamp
-            p= temperature.sensorName
+    div(id="placeholder", style="width:600px; height:300px;")
