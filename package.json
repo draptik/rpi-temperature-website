@@ -15,5 +15,6 @@
     "request": "^2.55.0",
     "serve-favicon": "~2.2.0",
     "sqlite3": "^3.0.5"
-  }
+  },
+  "devDependencies": {}
 }
