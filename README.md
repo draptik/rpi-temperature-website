@@ -29,3 +29,7 @@ npm start
 Then open your browser at [http://localhost:3000/](http://localhost:3000/). Test for express.js
 
 Then open your browser at [http://localhost:3000/temperatures](http://localhost:3000//temperatures). Tests the rest
+
+Should look something like this:
+
+![screenshot](documentation/images/screenshot-01.png)
