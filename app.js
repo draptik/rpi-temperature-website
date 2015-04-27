@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 
 var routes = require('./app_server/routes/index');
 // var users = require('./app_server/routes/users');
@@ -41,6 +42,16 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
+// Generate baseUrl in public/javascripts/baseUrl-generated.js
+// Requires public/javascripts/baseUrl-generated.js in ignore list of nodemon.json
+var url = process.env.NODE_ENV === 'production'
+		? 'http://rpi-temp-srv:3000'
+		: 'http://localhost:3000';
+var baseUrl = 'var baseUrl = \'' + url + '\';\n';
+var file = 'public/javascripts/baseUrl-generated.js';
+fs.writeFile(file, baseUrl);
+
 
 // error handlers ====================================================
 

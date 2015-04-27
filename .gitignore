@@ -30,3 +30,6 @@ node_modules
 
 # Debug log from npm
 npm-debug.log
+
+# Current workaround...
+public/javascripts/baseUrl-generated.js
