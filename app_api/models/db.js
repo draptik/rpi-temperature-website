@@ -1,15 +1,19 @@
 var sqlite3 = require('sqlite3');
 var fs = require('fs');
-var file = 'sample_data/templog.db';
-var exists = fs.existsSync(file);
+
+var dbLocation = process.env.NODE_ENV === 'production'
+		? '/var/www/templog.db'
+		: 'sample_data/templog.db';
+
+var exists = fs.existsSync(dbLocation);
 
 if (!exists) {
-	console.log('file does not exist.');
+	console.log('db file does not exist.');
 } else {
-	console.log('file exists.');
+	console.log('db file exists.');
 }
 
-var db = new sqlite3.Database(file);
+var db = new sqlite3.Database(dbLocation);
 
 module.exports.getAll = function (callback) {
 
