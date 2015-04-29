@@ -44,7 +44,7 @@ app.use(function(req, res, next) {
 });
 
 // Generate baseUrl in public/javascripts/baseUrl-generated.js
-// Requires public/javascripts/baseUrl-generated.js in ignore list of nodemon.json
+// 'public/javascripts/baseUrl-generated.js' must be in ignore list of nodemon.json to prevent circular dependency.
 var url = process.env.NODE_ENV === 'production'
 		? 'http://camel:3000'
 		: 'http://localhost:3000';
