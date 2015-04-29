@@ -113,8 +113,18 @@ var mapTimeSeries = function (data, sensorName, label) {
 	var series = [];
 	for(var i = 0; i < data.length; i++) {
 		if (data[i].sensorName === sensorName) {
+
 			// Note: Flot library expects time series data to be in milliseconds since 1970 ('.getTime()').
-			series.push([ (new Date(data[i].timestamp)).getTime(), data[i].degreeCelsius ]);
+			// Flot library does not care about time zones.
+			var dateWithTimezone = new Date(data[i].timestamp);
+			var milliSecondsSince1970Utc = dateWithTimezone.getTime();
+			var offsetInMinutes = dateWithTimezone.getTimezoneOffset();
+			var offsetInMilliSeconds = offsetInMinutes * 60 * 1000;
+
+			// We have to subtract (!) the time zone difference to fake a new utc time matching our local time zone.
+			var fakedUtcTimeInMilliSeconds = milliSecondsSince1970Utc - offsetInMilliSeconds;
+
+			series.push([ fakedUtcTimeInMilliSeconds, data[i].degreeCelsius ]);
 		}
 	}
 	return { data: series, label: label };
