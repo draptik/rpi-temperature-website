@@ -1,4 +1,13 @@
 {
 	"verbose": true,
-	"ignore": ["public/javascripts/baseUrl-generated.js"]
+	"ignore": [
+		"public/javascripts/baseUrl-generated.js",
+		"public/javascripts/vendor/",
+		"node_modules/",
+		"documentation/",
+		".git/",
+		".settings",
+		"typings",
+		"*.*~"
+	]
 }
