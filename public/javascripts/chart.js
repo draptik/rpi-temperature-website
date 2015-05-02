@@ -41,7 +41,7 @@ var renderChart = function(data) {
 	
 	showTooltip(detailPlaceholder);
 	zoom(detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder);
-	pane(detailPlot, detailPlaceholder);
+	// pane(detailPlot, detailPlaceholder);
 
 	$('#show-all').click(function (event) {
 		event.preventDefault();
@@ -54,33 +54,34 @@ var renderChart = function(data) {
 	});
 };
 
-var zoom = function (plot, placeholder, overview, overviewPlaceholder) {
+var zoom = function (detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder) {
 
 	var currentRange;
 	
 	// Zoom in (only x axis)
-	placeholder.bind('plotselected', function (event, ranges) {
-		$.each(plot.getXAxes(), function (_, axis) {
+	detailPlaceholder.bind('plotselected', function (event, ranges) {
+		$.each(detailPlot.getXAxes(), function (_, axis) {
 			var opts = axis.options;
 			opts.min = ranges.xaxis.from;
 			opts.max = ranges.xaxis.to;
 		});
-		plot.setupGrid();
-		plot.draw();
-		plot.clearSelection();
+		detailPlot.setupGrid();
+		detailPlot.draw();
+		detailPlot.clearSelection();
 
-		overview.setSelection(ranges, true);
+		currentRange = ranges.xaxis;
+		overviewPlot.setSelection(ranges, true);
 	});
 
 	overviewPlaceholder.bind('plotselected', function (event, ranges) {
 		console.log('ranges overview');
 		console.log(ranges.xaxis);
-		console.log('xaxis min: ' + overview.getXAxes()[0].min);
-		console.log('xaxis max: ' + overview.getXAxes()[0].max);
+		console.log('xaxis min: ' + overviewPlot.getXAxes()[0].min);
+		console.log('xaxis max: ' + overviewPlot.getXAxes()[0].max);
 		console.log(event);
 		currentRange = ranges.xaxis;
 		
-		plot.setSelection(ranges);
+		detailPlot.setSelection(ranges);
 	});
 
 	// hover range borders -------------------------------------------------------------------
@@ -101,9 +102,9 @@ var zoom = function (plot, placeholder, overview, overviewPlaceholder) {
 	// NOTE: To use 'plothover' the plot option 'grid: { hoverable: true }' is required!
 	overviewPlaceholder.bind('plothover', function (event, pos, item) {
 		if (currentRange) {
-			var from = overview.p2c({ x: currentRange.from, y: pos.y });
-			var to = overview.p2c({ x: currentRange.to, y: 0 });
-			var currentXPosPixel = overview.p2c({ x: pos.x, y: pos.y }).left;
+			var from = overviewPlot.p2c({ x: currentRange.from, y: pos.y });
+			var to = overviewPlot.p2c({ x: currentRange.to, y: 0 });
+			var currentXPosPixel = overviewPlot.p2c({ x: pos.x, y: pos.y }).left;
 
 			var isInDragRange = function (currentX, targetX) {
 				return currentX >= (targetX.left - (dragRangeInPixel/2)) &&
@@ -143,20 +144,21 @@ var showTooltip = function(placeholder){
 		}
 	});
 };
- 
-var pane = function (plot, placeholder) {
-	function addArrow(dir, right, top, offset) {
-		$("<img class='button' src='/images/arrow-" + dir + ".gif' style='right:" + right + "px;top:" + top + "px'>")
-			.appendTo(placeholder)
-			.click(function (e) {
-				e.preventDefault();
-				plot.pan(offset);
-			});
-	}
+
+// TODO Once paning from overview is implemented, this should not be needed anymore.
+// var pane = function (plot, placeholder) {
+// 	function addArrow(dir, right, top, offset) {
+// 		$("<img class='button' src='/images/arrow-" + dir + ".gif' style='right:" + right + "px;top:" + top + "px'>")
+// 			.appendTo(placeholder)
+// 			.click(function (e) {
+// 				e.preventDefault();
+// 				plot.pan(offset);
+// 			});
+// 	}
 	
-	addArrow('left', 600, 275, {left: -50});
-	addArrow('right', -20, 275, {left: 50});
-};
+// 	addArrow('left', 600, 275, {left: -50});
+// 	addArrow('right', -20, 275, {left: 50});
+// };
 
 
 
