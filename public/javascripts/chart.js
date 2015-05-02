@@ -56,10 +56,6 @@ var renderChart = function(data) {
 
 var zoom = function (plot, placeholder, overview, overviewPlaceholder) {
 
-	var min = plot.getData()[0].data[0][0];
-	var lastEntryPos = plot.getData()[0].data.length - 1;
-	var max = plot.getData()[0].data[lastEntryPos][0];
-
 	var currentRange;
 	
 	// Zoom in (only x axis)
