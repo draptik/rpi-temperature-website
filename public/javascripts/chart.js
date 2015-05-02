@@ -42,6 +42,16 @@ var renderChart = function(data) {
 	showTooltip(detailPlaceholder);
 	zoom(detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder);
 	pane(detailPlot, detailPlaceholder);
+
+	$('#show-all').click(function (event) {
+		event.preventDefault();
+		detailPlot.setSelection(
+			{ xaxis: {
+				from: detailPlot.getData()[0].data[0][0],
+				to: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0] }
+			});
+		overviewPlot.clearSelection();
+	});
 };
 
 var zoom = function (plot, placeholder, overview, overviewPlaceholder) {
@@ -113,17 +123,6 @@ var zoom = function (plot, placeholder, overview, overviewPlaceholder) {
 			}
 		}
 	});
-
-
-	// Zoom out button (back to origin size) --------------------------------------------
-	$("<div class='button' style='left:30px;bottom:40px'>zoom out</div>")
-		.appendTo(placeholder)
-		.click(function (event) {
-			event.preventDefault();
-			plot.setSelection({
-				xaxis: { from: min, to: max }
-			});
-		});
 };
 
 var showTooltip = function(placeholder){
