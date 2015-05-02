@@ -69,7 +69,7 @@ var zoom = function (detailPlot, detailPlaceholder, overviewPlot, overviewPlaceh
 		detailPlot.draw();
 		detailPlot.clearSelection();
 
-		currentRange = ranges.xaxis;
+		currentRange = ranges.xaxis; // update 'global' range for syncing all charts
 		overviewPlot.setSelection(ranges, true);
 	});
 
@@ -79,8 +79,8 @@ var zoom = function (detailPlot, detailPlaceholder, overviewPlot, overviewPlaceh
 		console.log('xaxis min: ' + overviewPlot.getXAxes()[0].min);
 		console.log('xaxis max: ' + overviewPlot.getXAxes()[0].max);
 		console.log(event);
-		currentRange = ranges.xaxis;
-		
+
+		currentRange = ranges.xaxis; // update 'global' range for syncing all charts
 		detailPlot.setSelection(ranges);
 	});
 
