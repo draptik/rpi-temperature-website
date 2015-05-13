@@ -20,8 +20,8 @@ var renderChart = function(data) {
 			hoverable: true,
 			clickable: true
 		},
-		selection: { mode: 'x' },
-		crosshair: { mode: '' }
+		selection: { mode: 'x'  }
+		//,crosshair: { mode: '' }
 	});
 
 	var overviewPlaceholder = $('#overview-placeholder');
@@ -35,8 +35,8 @@ var renderChart = function(data) {
 		yaxis: { ticks: [], min: 0, autoscaleMargin: 0.1 },
 		legend: { show: false },
 		grid: { hoverable: true },
-		selection: { mode: 'x' },
-		crosshair: { mode: 'x' }
+		selection: { mode: 'x' }
+		//,crosshair: { mode: 'x' }
 	});
 	
 	showTooltip(detailPlaceholder);
@@ -74,51 +74,45 @@ var zoom = function (detailPlot, detailPlaceholder, overviewPlot, overviewPlaceh
 	});
 
 	overviewPlaceholder.bind('plotselected', function (event, ranges) {
-		console.log('ranges overview');
-		console.log(ranges.xaxis);
-		console.log('xaxis min: ' + overviewPlot.getXAxes()[0].min);
-		console.log('xaxis max: ' + overviewPlot.getXAxes()[0].max);
-		console.log(event);
-
 		currentRange = ranges.xaxis; // update 'global' range for syncing all charts
 		detailPlot.setSelection(ranges);
 	});
 
 	// hover range borders -------------------------------------------------------------------
-	var dragRangeInPixel = 10;
+	// var dragRangeInPixel = 10;
 	
-	$('<div id="dragCursor"></div>')
-		.appendTo(overviewPlaceholder)
-		.css({
-			cursor: 'col-resize',
-			position: 'absolute',
-			top: '6px',
-			width: dragRangeInPixel + 'px',
-			height: '88px',
-			border: '1px solid red', // <-- for debugging
-			display: 'none'
-		});
+	// $('<div id="dragCursor"></div>')
+	// 	.appendTo(overviewPlaceholder)
+	// 	.css({
+	// 		cursor: 'col-resize',
+	// 		position: 'absolute',
+	// 		top: '6px',
+	// 		width: dragRangeInPixel + 'px',
+	// 		height: '88px',
+	// 		border: '1px solid red', // <-- for debugging
+	// 		display: 'none'
+	// 	});
 		
 	// NOTE: To use 'plothover' the plot option 'grid: { hoverable: true }' is required!
 	overviewPlaceholder.bind('plothover', function (event, pos, item) {
-		if (currentRange) {
-			var from = overviewPlot.p2c({ x: currentRange.from, y: pos.y });
-			var to = overviewPlot.p2c({ x: currentRange.to, y: 0 });
-			var currentXPosPixel = overviewPlot.p2c({ x: pos.x, y: pos.y }).left;
+		// if (currentRange) {
+		// 	var from = overviewPlot.p2c({ x: currentRange.from, y: pos.y });
+		// 	var to = overviewPlot.p2c({ x: currentRange.to, y: 0 });
+		// 	var currentXPosPixel = overviewPlot.p2c({ x: pos.x, y: pos.y }).left;
 
-			var isInDragRange = function (currentX, targetX) {
-				return currentX >= (targetX.left - (dragRangeInPixel/2)) &&
-					currentX <= (targetX.left + (dragRangeInPixel/2));
-			};
+		// 	var isInDragRange = function (currentX, targetX) {
+		// 		return currentX >= (targetX.left - (dragRangeInPixel/2)) &&
+		// 			currentX <= (targetX.left + (dragRangeInPixel/2));
+		// 	};
 			
-			if (isInDragRange(currentXPosPixel, from)) {
-				$('#dragCursor').css({left: from.left + (dragRangeInPixel/2), display: '' });
-			} else if (isInDragRange(currentXPosPixel, to)) {
-				$('#dragCursor').css({left: to.left + (dragRangeInPixel/2), display: '' });
-			} else {
-				$('#dragCursor').hide();
-			}
-		}
+		// 	if (isInDragRange(currentXPosPixel, from)) {
+		// 		$('#dragCursor').css({left: from.left + (dragRangeInPixel/2), display: '' });
+		// 	} else if (isInDragRange(currentXPosPixel, to)) {
+		// 		$('#dragCursor').css({left: to.left + (dragRangeInPixel/2), display: '' });
+		// 	} else {
+		// 		$('#dragCursor').hide();
+		// 	}
+		// }
 	});
 };
 
