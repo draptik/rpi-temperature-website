@@ -256,18 +256,20 @@ The plugin allso adds the following methods to the plot object:
         }
 
         function offsetBorderSelection(delta) {
-            console.log('offsetBorderSelection');
             var o = plot.getOptions();
-            if (o.selection.mode == 'x') {
-                console.log('offsetBorderSelection mode x');
-                console.log('offsetBorderSelection selection:');
-                console.log(selection);
+            if (o.selection.mode == 'y') {
                 if (selection.borderMove === 'first') {
-                    console.log('offsetBorderSelection first');
+                    selection.first.y += delta.pageY;
+                }
+                if (selection.borderMove === 'second') {
+                    selection.second.y += delta.pageY;
+                }
+            };
+            if (o.selection.mode == 'x') {
+                if (selection.borderMove === 'first') {
                     selection.first.x += delta.pageX;    
                 }
                 if (selection.borderMove === 'second') {
-                    console.log('offsetBorderSelection second');
                     selection.second.x += delta.pageX;    
                 }
             };
@@ -283,7 +285,7 @@ The plugin allso adds the following methods to the plot object:
             var pos = {};
             pos.x = clamp(0, e.pageX - offset.left - plotOffset.left, plot.width());
             pos.y = clamp(0, e.pageY - offset.top - plotOffset.top, plot.height());
-            var borderDragRange = 50;
+            var borderDragRange = 10;
             if (o.selection.mode == "y") {
                 return ((pos.y >= selection.first.y - borderDragRange) && (pos.y <= selection.first.y + borderDragRange)) ||
                     ((pos.y >= selection.second.y - borderDragRange) && (pos.y <= selection.second.y + borderDragRange));
@@ -291,11 +293,9 @@ The plugin allso adds the following methods to the plot object:
             if (o.selection.mode == "x") {
                 if ((pos.x >= selection.first.x - borderDragRange) && (pos.x <= selection.first.x + borderDragRange)) {
                     selection.borderMove = 'first';
-                    console.log('pointAtBorder first');
                     return true;
                 } else if ((pos.x >= selection.second.x - borderDragRange) && (pos.x <= selection.second.x + borderDragRange)) {
                     selection.borderMove = 'second';
-                    console.log('pointAtBorder first');
                     return true;
                 } else {
                     selection.borderMove = 'none';
@@ -309,10 +309,9 @@ The plugin allso adds the following methods to the plot object:
                 return;
 
             else if (selection.changeBorder) {
-                console.log('updateSelection');
-                offsetBorderSelection({pageX: pos.pageX - selection.mousePos.pageX});
+                offsetBorderSelection({pageX: pos.pageX - selection.mousePos.pageX,
+                                    pageY : pos.pageY - selection.mousePos.pageY});
                 selection.mousePos = pos;
-                // TODO?
             } else if (selection.panning) {
                 offsetSelection({pageX : pos.pageX - selection.mousePos.pageX, 
                                  pageY : pos.pageY - selection.mousePos.pageY});
