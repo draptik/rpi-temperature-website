@@ -166,6 +166,10 @@ var convertDataForFlot = function(data) {
 	var flotdata = [];
 	flotdata.push(mapTimeSeries(data, 'WA', 'outside'));
 	flotdata.push(mapTimeSeries(data, 'Z2', '2nd floor'));
+	flotdata.push(mapTimeSeries(data, 'Z3', '1st floor (work)'));
+	flotdata.push(mapTimeSeries(data, 'Z4', '1st floor (bathroom)'));
+	flotdata.push(mapTimeSeries(data, 'Z5', '1st floor (bedroom)'));
+	flotdata.push(mapTimeSeries(data, 'Z6', 'ground floor'));
 	return flotdata;
 };
 
