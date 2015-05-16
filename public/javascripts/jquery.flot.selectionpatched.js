@@ -18,10 +18,10 @@ Licensed under the MIT license.
 The plugin supports these options:
 
 selection: {
-	mode: null or "x" or "y" or "xy",
-	color: color,
-	shape: "round" or "miter" or "bevel",
-	minSize: number of pixels
+    mode: null or "x" or "y" or "xy",
+    color: color,
+    shape: "round" or "miter" or "bevel",
+    minSize: number of pixels
 }
 
 Selection support is enabled by setting the mode to one of "x", "y" or "xy".
@@ -45,11 +45,11 @@ When selection support is enabled, a "plotselected" event will be emitted on
 the DOM element you passed into the plot function. The event handler gets a
 parameter with the ranges selected on the axes, like this:
 
-	placeholder.bind( "plotselected", function( event, ranges ) {
-		alert("You selected " + ranges.xaxis.from + " to " + ranges.xaxis.to)
-		// similar for yaxis - with multiple axes, the extra ones are in
-		// x2axis, x3axis, ...
-	});
+    placeholder.bind( "plotselected", function( event, ranges ) {
+        alert("You selected " + ranges.xaxis.from + " to " + ranges.xaxis.to)
+        // similar for yaxis - with multiple axes, the extra ones are in
+        // x2axis, x3axis, ...
+    });
 
 The "plotselected" event is only fired when the user has finished making the
 selection. A "plotselecting" event is fired during the process with the same
@@ -70,7 +70,7 @@ The plugin allso adds the following methods to the plot object:
   an yaxis range and both xaxis and yaxis if the selection mode is "xy", like
   this:
 
-	setSelection({ xaxis: { from: 0, to: 10 }, yaxis: { from: 40, to: 60 } });
+    setSelection({ xaxis: { from: 0, to: 10 }, yaxis: { from: 40, to: 60 } });
 
   setSelection will trigger the "plotselected" event when called. If you don't
   want that to happen, e.g. if you're inside a "plotselected" handler, pass
@@ -96,8 +96,8 @@ The plugin allso adds the following methods to the plot object:
                 first: { x: -1, y: -1}, second: { x: -1, y: -1},
                 show: false,
                 active: false,
-			    panning: false,
-     			mousePos: null
+                panning: false,
+                mousePos: null
             };
 
         // FIXME: The drag handling implemented here should be
@@ -133,21 +133,21 @@ The plugin allso adds the following methods to the plot object:
                 savedhandlers.ondrag = document.ondrag;
                 document.ondrag = function () { return false; };
             }
-			selection.active = true;
-			selection.panning = pointInSelection(e);
+            selection.active = true;
+            selection.panning = pointInSelection(e);
 
-			selection.changeBorder = pointAtBorder(e);
-			
-			if (selection.panning) {
-				selection.mousePos = e;
-			} else {
-				setSelectionPos(selection.first, e);
-			}
+            selection.changeBorder = pointAtBorder(e);
+            
+            if (selection.panning) {
+                selection.mousePos = e;
+            } else {
+                setSelectionPos(selection.first, e);
+            }
 
-			// if (selection.changeBorder) {
-			// 	selection.
-			// }
-			
+            // if (selection.changeBorder) {
+            //     selection.
+            // }
+            
             // this is a bit silly, but we have to use a closure to be
             // able to whack the same handler again
             mouseUpHandler = function (e) { onMouseUp(e); };
@@ -221,53 +221,53 @@ The plugin allso adds the following methods to the plot object:
                 pos.y = pos == selection.first ? 0 : plot.height();
         }
 
-		function pointInSelection(e) {
-			if (!selection.show) {
-				return false;
-			}
-			var o = plot.getOptions();
-			var offset = plot.getPlaceholder().offset();
-			var plotOffset = plot.getPlotOffset();
-			var pos = {};
-			pos.x = clamp(0, e.pageX - offset.left - plotOffset.left, plot.width());
-			pos.y = clamp(0, e.pageY - offset.top - plotOffset.top, plot.height());
+        function pointInSelection(e) {
+            if (!selection.show) {
+                return false;
+            }
+            var o = plot.getOptions();
+            var offset = plot.getPlaceholder().offset();
+            var plotOffset = plot.getPlotOffset();
+            var pos = {};
+            pos.x = clamp(0, e.pageX - offset.left - plotOffset.left, plot.width());
+            pos.y = clamp(0, e.pageY - offset.top - plotOffset.top, plot.height());
 
-			if (o.selection.mode == "y") {
-				return ((pos.y >= selection.first.y) && (pos.y <= selection.second.y)) ||
-					((pos.y >= selection.second.y) && (pos.y <= selection.first.y));
-			}
-			if (o.selection.mode == "x") {
-				return ((pos.x >= selection.first.x) && (pos.x <= selection.second.x)) ||
-					((pos.x >= selection.second.x) && (pos.x <= selection.first.x));
-			}
-			return false;
-		}
+            if (o.selection.mode == "y") {
+                return ((pos.y >= selection.first.y) && (pos.y <= selection.second.y)) ||
+                    ((pos.y >= selection.second.y) && (pos.y <= selection.first.y));
+            }
+            if (o.selection.mode == "x") {
+                return ((pos.x >= selection.first.x) && (pos.x <= selection.second.x)) ||
+                    ((pos.x >= selection.second.x) && (pos.x <= selection.first.x));
+            }
+            return false;
+        }
 
-		function offsetSelection(delta) {
-			var o = plot.getOptions();
-			if (o.selection.mode == "y") {
-				selection.first.y += delta.pageY;
-				selection.second.y += delta.pageY;
-			}
-			if (o.selection.mode == "x") {
-				selection.first.x += delta.pageX;
-				selection.second.x += delta.pageX;
-			}
-		}
+        function offsetSelection(delta) {
+            var o = plot.getOptions();
+            if (o.selection.mode == "y") {
+                selection.first.y += delta.pageY;
+                selection.second.y += delta.pageY;
+            }
+            if (o.selection.mode == "x") {
+                selection.first.x += delta.pageX;
+                selection.second.x += delta.pageX;
+            }
+        }
 
         function updateSelection(pos) {
             if (pos.pageX == null)
                 return;
 
-			if (selection.panning) {
-				offsetSelection({pageX : pos.pageX - selection.mousePos.pageX, 
+            if (selection.panning) {
+                offsetSelection({pageX : pos.pageX - selection.mousePos.pageX, 
                                  pageY : pos.pageY - selection.mousePos.pageY});
-				selection.mousePos = pos;
+                selection.mousePos = pos;
             }
             else {            
-				setSelectionPos(selection.second, pos);
+                setSelectionPos(selection.second, pos);
             }
-			
+            
             if (selectionIsSane()) {
                 selection.show = true;
                 plot.triggerRedrawOverlay();
@@ -361,8 +361,8 @@ The plugin allso adds the following methods to the plot object:
         plot.setSelection = setSelection;
         plot.getSelection = getSelection;
 
-		plot.getSelecting = function() { return selection.active;};
-		
+        plot.getSelecting = function() { return selection.active;};
+        
         plot.hooks.bindEvents.push(function(plot, eventHolder) {
             var o = plot.getOptions();
             if (o.selection.mode != null) {
