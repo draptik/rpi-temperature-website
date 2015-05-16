@@ -8,7 +8,7 @@ If running the command `npm start` and visiting [http://localhost:3000/](http://
 
 Otherwise visit [http://localhost:3000/temperatures](http://localhost:3000//temperatures).
 
-# TL;DR Build instructions
+## TL;DR Build instructions
 
 Prerequisites: [node.js](https://nodejs.org/).
 
@@ -20,7 +20,7 @@ npm install
 
 `npm install`: gets the backend dependencies (ie express.js, sqlite3-api for express).
 
-# Quick test
+## Quick test
 
 ```
 npm start
@@ -33,3 +33,17 @@ Then open your browser at [http://localhost:3000/temperatures](http://localhost:
 Should look something like this:
 
 ![screenshot](documentation/images/screenshot-01.png)
+
+## Production setup
+
+```
+export SET_ENV=production
+npm start
+```
+
+## TODOs
+
+- legend: placement outside of plot
+- legend: select which data set to display
+- overview plot: fix margins
+- detail plot: add panning functionality
