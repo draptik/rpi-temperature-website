@@ -15,7 +15,10 @@ var renderChart = function(data) {
 			lines: { show: true },
 			points: { show: true }
 		},
-		legend: { show: true },
+		legend: { 
+			show: true,
+			container: $('#detail-legend')
+		},
 		grid: {
 			hoverable: true,
 			clickable: true
