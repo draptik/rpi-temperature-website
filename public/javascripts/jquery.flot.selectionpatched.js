@@ -97,7 +97,8 @@ The plugin allso adds the following methods to the plot object:
                 show: false,
                 active: false,
                 panning: false,
-                mousePos: null
+                mousePos: null,
+                borderMove: 'none' // or 'first' or 'second'
             };
 
         // FIXME: The drag handling implemented here should be
@@ -138,16 +139,15 @@ The plugin allso adds the following methods to the plot object:
 
             selection.changeBorder = pointAtBorder(e);
             
-            if (selection.panning) {
+            if (selection.changeBorder) {
+                selection.mousePos = e;
+            } else if (selection.panning) {
+                // TODO?
                 selection.mousePos = e;
             } else {
                 setSelectionPos(selection.first, e);
             }
 
-            // if (selection.changeBorder) {
-            //     selection.
-            // }
-            
             // this is a bit silly, but we have to use a closure to be
             // able to whack the same handler again
             mouseUpHandler = function (e) { onMouseUp(e); };
@@ -204,7 +204,7 @@ The plugin allso adds the following methods to the plot object:
         }
 
         function clamp(min, value, max) {
-            return value < min ? min: (value > max ? max: value);
+            return value < min ? min : (value > max ? max : value);
         }
 
         function setSelectionPos(pos, e) {
@@ -255,11 +255,65 @@ The plugin allso adds the following methods to the plot object:
             }
         }
 
+        function offsetBorderSelection(delta) {
+            console.log('offsetBorderSelection');
+            var o = plot.getOptions();
+            if (o.selection.mode == 'x') {
+                console.log('offsetBorderSelection mode x');
+                console.log('offsetBorderSelection selection:');
+                console.log(selection);
+                if (selection.borderMove === 'first') {
+                    console.log('offsetBorderSelection first');
+                    selection.first.x += delta.pageX;    
+                }
+                if (selection.borderMove === 'second') {
+                    console.log('offsetBorderSelection second');
+                    selection.second.x += delta.pageX;    
+                }
+            };
+        };
+
+        function pointAtBorder(e) {
+            if (!selection.show) {
+                return false;
+            }
+            var o = plot.getOptions();
+            var offset = plot.getPlaceholder().offset();
+            var plotOffset = plot.getPlotOffset();
+            var pos = {};
+            pos.x = clamp(0, e.pageX - offset.left - plotOffset.left, plot.width());
+            pos.y = clamp(0, e.pageY - offset.top - plotOffset.top, plot.height());
+            var borderDragRange = 50;
+            if (o.selection.mode == "y") {
+                return ((pos.y >= selection.first.y - borderDragRange) && (pos.y <= selection.first.y + borderDragRange)) ||
+                    ((pos.y >= selection.second.y - borderDragRange) && (pos.y <= selection.second.y + borderDragRange));
+            }
+            if (o.selection.mode == "x") {
+                if ((pos.x >= selection.first.x - borderDragRange) && (pos.x <= selection.first.x + borderDragRange)) {
+                    selection.borderMove = 'first';
+                    console.log('pointAtBorder first');
+                    return true;
+                } else if ((pos.x >= selection.second.x - borderDragRange) && (pos.x <= selection.second.x + borderDragRange)) {
+                    selection.borderMove = 'second';
+                    console.log('pointAtBorder first');
+                    return true;
+                } else {
+                    selection.borderMove = 'none';
+                }
+            }
+            return false;
+        };
+
         function updateSelection(pos) {
             if (pos.pageX == null)
                 return;
 
-            if (selection.panning) {
+            else if (selection.changeBorder) {
+                console.log('updateSelection');
+                offsetBorderSelection({pageX: pos.pageX - selection.mousePos.pageX});
+                selection.mousePos = pos;
+                // TODO?
+            } else if (selection.panning) {
                 offsetSelection({pageX : pos.pageX - selection.mousePos.pageX, 
                                  pageY : pos.pageY - selection.mousePos.pageY});
                 selection.mousePos = pos;
