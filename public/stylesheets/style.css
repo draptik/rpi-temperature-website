@@ -26,7 +26,7 @@ input[type=checkbox] {
 }
 
 .legend-label {
-    width: 350px;
+    width: 250px;
     display: inline-block;
     vertical-align: top;
 }
