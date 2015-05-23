@@ -43,7 +43,9 @@ npm start
 
 ## TODOs
 
-- legend: placement outside of plot
-- legend: select which data set to display
+- ~~legend: placement outside of plot~~
+- ~~legend: select which data set to display~~
+- legend: checkbox, color box and label should be side by side
+- tooltip should show all y values for selected x value (requires data interpolation, check available plugins)
 - overview plot: fix margins
 - detail plot: add panning functionality
