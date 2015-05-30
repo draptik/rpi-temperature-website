@@ -62,7 +62,7 @@ $(function () {
                         show: true
                     },
                     points: {
-                        show: true
+                        show: false
                     }
                 },
                 legend: {
@@ -70,9 +70,10 @@ $(function () {
                 },
                 grid: {
                     hoverable: true,
-                    clickable: true
+                    clickable: true,
+                    autoHighlight: false
                 },
-                selection: {
+                crosshair: {
                     mode: 'x'
                 }
             });
@@ -128,130 +129,92 @@ $(function () {
                 overviewPlot.draw();
             }
 
+            // Show current value(s) in tooltip
+            $('<div id="tooltip"><ul></ul></div>').css({
+                position: 'absolute',
+                display: 'none',
+                border: '1px solid #fdd',
+                padding: '2px',
+                'background-color': '#fee',
+                opacity: 0.80
+            }).appendTo('body');
 
-            showTooltip(detailPlaceholder);
-            zoom(detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder);
-            //            pane(detailPlot, detailPlaceholder);
+            var tooltipContainer = $('#tooltip');
+            var tooltipContent = $('#tooltip ul');
 
-            $('#show-all').click(function (event) {
-                event.preventDefault();
-                detailPlot.setSelection({
-                    xaxis: {
-                        from: detailPlot.getData()[0].data[0][0],
-                        to: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0]
+            // add empty entry for each time series
+            for (var i = 0; i < detailPlot.getData().length; i++) {
+                tooltipContent.append('<li>' + detailPlot.getData()[i].label + ': </li>');
+            }
+
+            var updateTooltipTimeout = null;
+            var latestPosition = null;
+
+            function updateTooltip() {
+                updateTooltipTimeout = null;
+                var pos = latestPosition;
+                var axes = detailPlot.getAxes();
+                if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+                    pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+                    return;
+                }
+
+                var seriesIndex, dataPointInSeries, dataset = detailPlot.getData();
+
+                // Iterate of each time series ('seriesIndex')
+                var yMax;
+                for (seriesIndex = 0; seriesIndex < dataset.length; ++seriesIndex) {
+                    var series = dataset[seriesIndex];
+
+                    // Find the nearest points, x-wise
+                    for (dataPointInSeries = 0; series.data.length; ++dataPointInSeries) {
+                        if (series.data[dataPointInSeries][0] > pos.x) {
+                            break;
+                        }
                     }
+
+                    // Now interpolate
+                    var y,
+                        p1 = series.data[dataPointInSeries - 1],
+                        p2 = series.data[dataPointInSeries];
+
+                    if (p1 == null) {
+                        y = p2[1];
+                    } else if (p2 == null) {
+                        y = p1[1];
+                    } else {
+                        y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+                    }
+
+                    // Set the correct value in the tooltip
+                    if ($.isNumeric(y)) {
+                        var toolTipItem = tooltipContent.find('li').eq(seriesIndex);
+                        var text = toolTipItem.text();
+                        toolTipItem.text(text.replace(/:.*/, ': ' + y.toFixed(2)));
+                    }
+
+                    if (y > yMax) {
+                        yMax = y;
+                    }
+                }
+
+                tooltipContainer.css({
+                    top: pos.pageY,
+                    left: pos.pageX
                 });
-                overviewPlot.clearSelection();
+            };
+
+            detailPlaceholder.bind('plothover', function (event, pos, item) {
+                latestPosition = pos;
+                if (!updateTooltipTimeout) {
+                    updateTooltipTimeout = setTimeout(updateTooltip, 500);
+                }
             });
         };
 
         updatePlot();
     });
 });
-
-var zoom = function (detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder) {
-
-    var currentRange;
-
-    // Zoom in (only x axis)
-    detailPlaceholder.bind('plotselected', function (event, ranges) {
-        $.each(detailPlot.getXAxes(), function (_, axis) {
-            var opts = axis.options;
-            opts.min = ranges.xaxis.from;
-            opts.max = ranges.xaxis.to;
-        });
-        detailPlot.setupGrid();
-        detailPlot.draw();
-        detailPlot.clearSelection();
-
-        currentRange = ranges.xaxis; // update 'global' range for syncing all charts
-        overviewPlot.setSelection(ranges, true);
-    });
-
-    overviewPlaceholder.bind('plotselected', function (event, ranges) {
-        currentRange = ranges.xaxis; // update 'global' range for syncing all charts
-        detailPlot.setSelection(ranges);
-    });
-
-    // hover range borders -------------------------------------------------------------------
-    // var dragRangeInPixel = 10;
-
-    // $('<div id="dragCursor"></div>')
-    // 	.appendTo(overviewPlaceholder)
-    // 	.css({
-    // 		cursor: 'col-resize',
-    // 		position: 'absolute',
-    // 		top: '6px',
-    // 		width: dragRangeInPixel + 'px',
-    // 		height: '88px',
-    // 		border: '1px solid red', // <-- for debugging
-    // 		display: 'none'
-    // 	});
-
-    // NOTE: To use 'plothover' the plot option 'grid: { hoverable: true }' is required!
-    overviewPlaceholder.bind('plothover', function (event, pos, item) {
-        // if (currentRange) {
-        // 	var from = overviewPlot.p2c({ x: currentRange.from, y: pos.y });
-        // 	var to = overviewPlot.p2c({ x: currentRange.to, y: 0 });
-        // 	var currentXPosPixel = overviewPlot.p2c({ x: pos.x, y: pos.y }).left;
-
-        // 	var isInDragRange = function (currentX, targetX) {
-        // 		return currentX >= (targetX.left - (dragRangeInPixel/2)) &&
-        // 			currentX <= (targetX.left + (dragRangeInPixel/2));
-        // 	};
-
-        // 	if (isInDragRange(currentXPosPixel, from)) {
-        // 		$('#dragCursor').css({left: from.left + (dragRangeInPixel/2), display: '' });
-        // 	} else if (isInDragRange(currentXPosPixel, to)) {
-        // 		$('#dragCursor').css({left: to.left + (dragRangeInPixel/2), display: '' });
-        // 	} else {
-        // 		$('#dragCursor').hide();
-        // 	}
-        // }
-    });
-};
-
-var showTooltip = function (placeholder) {
-    $('<div id="tooltip"></div>').css({
-        position: 'absolute',
-        display: 'none',
-        border: '1px solid #fdd',
-        padding: '2px',
-        'background-color': '#fee',
-        opacity: 0.80
-    }).appendTo('body');
-
-    placeholder.bind('plothover', function (event, pos, item) {
-        if (item) {
-            var x = item.datapoint[0],
-                y = item.datapoint[1].toFixed(1);
-            $('#tooltip').html(formatDate(x) + ' : <strong>' + y + '&deg;C</strong>')
-                .css({
-                    top: item.pageY + 5,
-                    left: item.pageX + 5
-                })
-                .fadeIn(200);
-        } else {
-            $('#tooltip').hide();
-        }
-    });
-};
-
-// TODO Once paning from overview is implemented, this should not be needed anymore.
-// var pane = function (plot, placeholder) {
-// 	function addArrow(dir, right, top, offset) {
-// 		$("<img class='button' src='/images/arrow-" + dir + ".gif' style='right:" + right + "px;top:" + top + "px'>")
-// 			.appendTo(placeholder)
-// 			.click(function (e) {
-// 				e.preventDefault();
-// 				plot.pan(offset);
-// 			});
-// 	}
-
-// 	addArrow('left', 600, 275, {left: -50});
-// 	addArrow('right', -20, 275, {left: 50});
-// };
-
 
 
 // Prepare data -------------------------------------------------------------------------------------------
