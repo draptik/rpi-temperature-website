@@ -37,6 +37,14 @@ $(function () {
                 }
             });
 
+            var rangeselectionCallback = function (o) {
+                var xaxis = detailPlot.getAxes().xaxis;
+                xaxis.options.min = o.start;
+                xaxis.options.max = o.end;
+                detailPlot.setupGrid();
+                detailPlot.draw();
+            };
+
             var detailPlaceholder = $('#detail-placeholder');
             var detailPlot = $.plot(detailPlaceholder, plotdata, {
                 xaxis: {
@@ -75,22 +83,21 @@ $(function () {
                     }
                 },
                 xaxis: {
-                    ticks: [],
                     mode: "time"
                 },
-                yaxis: {
-                    ticks: [],
-                    min: 0,
-                    autoscaleMargin: 0.1
-                },
+                yaxis: {},
                 legend: {
                     show: false
                 },
                 grid: {
-                    hoverable: true
+                    hoverable: false
                 },
-                selection: {
-                    mode: 'x'
+                rangeselection: {
+                    color: '#999',
+                    enabled: true,
+                    start: detailPlot.getData()[0].data[0][0],
+                    end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 100][0],
+                    callback: rangeselectionCallback
                 }
             });
             showTooltip(detailPlaceholder);
