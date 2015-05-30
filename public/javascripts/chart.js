@@ -22,8 +22,12 @@ $(function () {
                 "<label class='legend-label' for='id" + key + "'>" + val.label + "</label>");
         });
 
-        // TODO (BUG): Currently changing the selected time series will reset the selection range.
         legendContainer.find("input").click(updatePlot);
+
+        var currentSelection = {
+            min: undefined,
+            max: undefined
+        };
 
         // Main plotting function ---------------------------------------------
         function updatePlot() {
@@ -43,6 +47,9 @@ $(function () {
                 xaxis.options.max = o.end;
                 detailPlot.setupGrid();
                 detailPlot.draw();
+
+                currentSelection.min = o.start;
+                currentSelection.max = o.end;
             };
 
             var detailPlaceholder = $('#detail-placeholder');
@@ -71,7 +78,13 @@ $(function () {
             });
 
             var overviewPlaceholder = $('#overview-placeholder');
-            var overviewPlot = $.plot(overviewPlaceholder, plotdata, {
+            var overviewData = $.extend(true, [], plotdata);
+            for (var i = 0; i < overviewData.length; i++) {
+                overviewData[i].color = '#ccc';
+                overviewData[i].label = undefined;
+            }
+
+            var overviewPlot = $.plot(overviewPlaceholder, overviewData, {
                 series: {
                     lines: {
                         show: true,
@@ -100,6 +113,22 @@ $(function () {
                     callback: rangeselectionCallback
                 }
             });
+
+            // Since the canvas is redrawn after every interaction, we have to manually set the selection range (if it exists)
+            if (currentSelection.min !== undefined && currentSelection.max !== undefined) {
+                var xaxis = detailPlot.getAxes().xaxis;
+                xaxis.options.min = currentSelection.min;
+                xaxis.options.max = currentSelection.max;
+                detailPlot.setupGrid();
+                detailPlot.draw();
+
+                overviewPlot.getOptions().rangeselection.start = currentSelection.min;
+                overviewPlot.getOptions().rangeselection.end = currentSelection.max;
+                overviewPlot.setupGrid();
+                overviewPlot.draw();
+            }
+
+
             showTooltip(detailPlaceholder);
             zoom(detailPlot, detailPlaceholder, overviewPlot, overviewPlaceholder);
             //            pane(detailPlot, detailPlaceholder);
