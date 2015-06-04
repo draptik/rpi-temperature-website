@@ -30,3 +30,7 @@ input[type=checkbox] {
     display: inline-block;
     vertical-align: top;
 }
+
+#tooltip-title {
+    font-weight: bold;
+}

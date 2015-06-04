@@ -131,7 +131,7 @@ $(function () {
 
             // Show current value(s) in tooltip
             if ($('#tooltip').length == 0) {
-                $('<div id="tooltip"><ul></ul></div>').css({
+                $('<div id="tooltip"><div id="tooltip-title"></div><ul></ul></div>').css({
                     position: 'absolute',
                     display: 'none',
                     border: '1px solid #fdd',
@@ -202,17 +202,24 @@ $(function () {
                     }
                 }
 
+                // Tooltip position
                 tooltipContainer.css({
                     top: pos.pageY,
                     left: pos.pageX
                 });
+
+                // Current time as tooltip title
+                $('#tooltip-title').empty();
+                $('#tooltip-title').append(new Date(pos.x - (1000 * 60 * 60 * 2)));
+
+                // Show tooltip
                 tooltipContainer.show('slow');
             };
 
             detailPlaceholder.bind('plothover', function (event, pos, item) {
                 latestPosition = pos;
                 if (!updateTooltipTimeout) {
-                    updateTooltipTimeout = setTimeout(updateTooltip, 500);
+                    updateTooltipTimeout = setTimeout(updateTooltip, 400);
                 }
             });
         };
