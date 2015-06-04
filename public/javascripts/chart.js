@@ -156,6 +156,7 @@ $(function () {
                 var axes = detailPlot.getAxes();
                 if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
                     pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+                    tooltipContainer.hide('slow');
                     return;
                 }
 
@@ -202,6 +203,7 @@ $(function () {
                     top: pos.pageY,
                     left: pos.pageX
                 });
+                tooltipContainer.show('slow');
             };
 
             detailPlaceholder.bind('plothover', function (event, pos, item) {
