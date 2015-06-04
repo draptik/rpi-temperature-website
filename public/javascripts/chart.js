@@ -130,21 +130,24 @@ $(function () {
             }
 
             // Show current value(s) in tooltip
-            $('<div id="tooltip"><ul></ul></div>').css({
-                position: 'absolute',
-                display: 'none',
-                border: '1px solid #fdd',
-                padding: '2px',
-                'background-color': '#fee',
-                opacity: 0.80
-            }).appendTo('body');
+            if ($('#tooltip').length == 0) {
+                $('<div id="tooltip"><ul></ul></div>').css({
+                    position: 'absolute',
+                    display: 'none',
+                    border: '1px solid #fdd',
+                    padding: '2px',
+                    'background-color': '#fee',
+                    opacity: 0.80
+                }).appendTo('body');
+            }
 
             var tooltipContainer = $('#tooltip');
             var tooltipContent = $('#tooltip ul');
 
             // add empty entry for each time series
-            for (var i = 0; i < detailPlot.getData().length; i++) {
-                tooltipContent.append('<li>' + detailPlot.getData()[i].label + ': </li>');
+            tooltipContent.empty();
+            for (var i = 0; i < plotdata.length; i++) {
+                tooltipContent.append('<li>' + plotdata[i].label + ': </li>');
             }
 
             var updateTooltipTimeout = null;
@@ -160,7 +163,7 @@ $(function () {
                     return;
                 }
 
-                var seriesIndex, dataPointInSeries, dataset = detailPlot.getData();
+                var seriesIndex, dataPointInSeries, dataset = plotdata;
 
                 // Iterate of each time series ('seriesIndex')
                 var yMax;
