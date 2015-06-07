@@ -253,15 +253,20 @@ var mapTimeSeries = function (data, sensorName, label, col) {
 
             // Note: Flot library expects time series data to be in milliseconds since 1970 ('.getTime()').
             // Flot library does not care about time zones.
-            var dateWithTimezone = new Date(data[i].timestamp);
-            var milliSecondsSince1970Utc = dateWithTimezone.getTime();
-            var offsetInMinutes = dateWithTimezone.getTimezoneOffset();
-            var offsetInMilliSeconds = offsetInMinutes * 60 * 1000;
+            //var dateWithTimezone = new Date(data[i].timestamp);
+            //var milliSecondsSince1970Utc = dateWithTimezone.getTime();
+            //var offsetInMinutes = dateWithTimezone.getTimezoneOffset();
+            //var offsetInMilliSeconds = offsetInMinutes * 60 * 1000;
+
+	var mDate = moment.tz(data[i].timestamp, 'YYYY-MM-DD HH:mm:ss', 'Europe/Berlin');
+        var millis = mDate.milliseconds();
+
 
             // We have to subtract (!) the time zone difference to fake a new utc time matching our local time zone.
             var fakedUtcTimeInMilliSeconds = milliSecondsSince1970Utc - offsetInMilliSeconds;
 
-            series.push([fakedUtcTimeInMilliSeconds, data[i].degreeCelsius]);
+            //series.push([fakedUtcTimeInMilliSeconds, data[i].degreeCelsius]);
+	series.push([millis, data[i].degreeCelsius]);
         }
     }
     return {
