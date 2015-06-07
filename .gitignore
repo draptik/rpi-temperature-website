@@ -36,3 +36,6 @@ public/javascripts/baseUrl-generated.js
 
 # Sublime project files
 *.sublime-*
+
+# bower
+public/vendor/bowre
