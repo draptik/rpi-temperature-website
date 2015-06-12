@@ -57,6 +57,9 @@ $(function () {
                 xaxis: {
                     mode: 'time'
                 },
+                yaxis: {
+                    panRange: false
+                },
                 series: {
                     lines: {
                         show: true
@@ -75,6 +78,9 @@ $(function () {
                 },
                 crosshair: {
                     mode: 'x'
+                },
+                pan: {
+                    interactive: true
                 }
             });
 
@@ -216,17 +222,35 @@ $(function () {
                 tooltipContainer.show('slow');
             };
 
-            detailPlaceholder.bind('plothover', function (event, pos, item) {
-                latestPosition = pos;
-                if (!updateTooltipTimeout) {
-                    updateTooltipTimeout = setTimeout(updateTooltip, 400);
-                }
+            //            detailPlaceholder.bind('plothover', function (event, pos, item) {
+            //                latestPosition = pos;
+            //                if (!updateTooltipTimeout) {
+            //                    updateTooltipTimeout = setTimeout(updateTooltip, 400);
+            //                }
+            //            });
+
+            function clampOverViewPlot(value) {
+                overviewMin = overviewPlot.getAxes().xaxis.min;
+                overviewMax = overviewPlot.getAxes().xaxis.max;
+                return clamp(overviewMin, value, overviewMax);
+            };
+
+            detailPlaceholder.bind('plotpan', function (event, plot) {
+
+                currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
+                currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
+                overviewPlot.setSelection(currentSelection.min, currentSelection.max);
             });
+
         };
 
         updatePlot();
     });
 });
+
+function clamp(min, value, max) {
+    return value < min ? min : (value > max ? max : value);
+};
 
 
 // Prepare data -------------------------------------------------------------------------------------------
