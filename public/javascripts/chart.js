@@ -16,7 +16,7 @@ $(function () {
 
         // Legend -------------------------------------------------------------
         var legendContainer = $('#detail-legend');
-        legendContainer.append('<div class="div-table"></div>');
+        legendContainer.append('<div class="div-table"><div class="div-table-row"><div id="detail-selection-header">FOO</div></div>');
         $.each(data, function (key, val) {
             var tablerow = '<div class="div-table-row">' +
                 '<div class="div-table-col"><input type="checkbox" name="' + key + '" checked="checked" id="id' + key + '"></input></div>' +
@@ -194,7 +194,9 @@ $(function () {
                     }
                 }
 
-                // Current time TODO
+                // Current time
+                var m = moment(pos.x);
+                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'))
             };
 
             detailPlaceholder.bind('plothover', function (event, pos, item) {
