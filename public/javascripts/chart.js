@@ -16,10 +16,15 @@ $(function () {
 
         // Legend -------------------------------------------------------------
         var legendContainer = $('#detail-legend');
+        legendContainer.append('<div class="div-table"></div>');
         $.each(data, function (key, val) {
-            legendContainer.append("<br/><input type='checkbox' name='" + key + "' checked='checked' id='id" + key + "'></input>" +
-                "<div class='legend-color'><div style='width:4px; height: 0; border: 5px solid " + colors[key] + "; overflow: hidden;'></div></div>" +
-                "<label class='legend-label' for='id" + key + "'>" + val.label + "</label>");
+            var tablerow = '<div class="div-table-row">' +
+                '<div class="div-table-col"><input type="checkbox" name="' + key + '" checked="checked" id="id' + key + '"></input></div>' +
+                '<div class="div-table-col"><div class="legend-color"><div style="width:4px; height: 0; border: 5px solid ' + colors[key] + '; overflow: hidden;"></div></div></div>' +
+                '<div class="div-table-col"><label class="legend-label" for="id' + key + '">' + val.label + '</label></div>' +
+                '<div class="div-table-col col-right"><div id="temperature-value' + val.id + '"></div></div>' +
+                '</div>';
+            legendContainer.find('.div-table').append(tablerow);
         });
 
         legendContainer.find("input").click(updatePlot);
@@ -135,37 +140,17 @@ $(function () {
                 overviewPlot.draw();
             }
 
-            // Show current value(s) in tooltip
-            if ($('#tooltip').length == 0) {
-                $('<div id="tooltip"><div id="tooltip-title"></div><ul></ul></div>').css({
-                    position: 'absolute',
-                    display: 'none',
-                    border: '1px solid #fdd',
-                    padding: '2px',
-                    'background-color': '#fee',
-                    opacity: 0.80
-                }).appendTo('body');
-            }
-
-            var tooltipContainer = $('#tooltip');
-            var tooltipContent = $('#tooltip ul');
-
-            // add empty entry for each time series
-            tooltipContent.empty();
-            for (var i = 0; i < plotdata.length; i++) {
-                tooltipContent.append('<li>' + plotdata[i].label + ': </li>');
-            }
-
-            var updateTooltipTimeout = null;
+            // CURRENT VALUE IN LEGEND --------------------------------------
+            var updateDetailSelectionTimeout = null;
             var latestPosition = null;
 
-            function updateTooltip() {
-                updateTooltipTimeout = null;
+            function updateDetailSelection() {
+                updateDetailSelectionTimeout = null;
                 var pos = latestPosition;
                 var axes = detailPlot.getAxes();
                 if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
                     pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
-                    tooltipContainer.hide('slow');
+                    //tooltipContainer.hide('slow');
                     return;
                 }
 
@@ -196,11 +181,12 @@ $(function () {
                         y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
                     }
 
-                    // Set the correct value in the tooltip
+                    // Set the correct value for the current sensor
                     if ($.isNumeric(y)) {
-                        var toolTipItem = tooltipContent.find('li').eq(seriesIndex);
-                        var text = toolTipItem.text();
-                        toolTipItem.text(text.replace(/:.*/, ': ' + y.toFixed(2)));
+                        var temperatureValueContainer = legendContainer.find('#temperature-value' + series.id);
+                        if (temperatureValueContainer) {
+                            temperatureValueContainer.text(y.toFixed(1));
+                        }
                     }
 
                     if (y > yMax) {
@@ -208,26 +194,15 @@ $(function () {
                     }
                 }
 
-                // Tooltip position
-                tooltipContainer.css({
-                    top: pos.pageY,
-                    left: pos.pageX
-                });
-
-                // Current time as tooltip title
-                $('#tooltip-title').empty();
-                $('#tooltip-title').append(new Date(pos.x - (1000 * 60 * 60 * 2)));
-
-                // Show tooltip
-                tooltipContainer.show('slow');
+                // Current time TODO
             };
 
-            //            detailPlaceholder.bind('plothover', function (event, pos, item) {
-            //                latestPosition = pos;
-            //                if (!updateTooltipTimeout) {
-            //                    updateTooltipTimeout = setTimeout(updateTooltip, 400);
-            //                }
-            //            });
+            detailPlaceholder.bind('plothover', function (event, pos, item) {
+                latestPosition = pos;
+                if (!updateDetailSelectionTimeout) {
+                    updateDetailSelectionTimeout = setTimeout(updateDetailSelection, 400);
+                }
+            });
 
             function clampOverViewPlot(value) {
                 overviewMin = overviewPlot.getAxes().xaxis.min;
@@ -236,7 +211,6 @@ $(function () {
             };
 
             detailPlaceholder.bind('plotpan', function (event, plot) {
-
                 currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
                 currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
                 overviewPlot.setSelection(currentSelection.min, currentSelection.max);
@@ -251,7 +225,6 @@ $(function () {
 function clamp(min, value, max) {
     return value < min ? min : (value > max ? max : value);
 };
-
 
 // Prepare data -------------------------------------------------------------------------------------------
 var formatDate = function (date) {
@@ -280,9 +253,12 @@ var mapTimeSeries = function (data, sensorName, label, col) {
             series.push([millis, data[i].degreeCelsius]);
         }
     }
+
+    // Note: Add an 'id' property (because the label property is a descriptive string)
     return {
         data: series,
         label: label,
-        color: col
+        color: col,
+        id: sensorName
     };
 };
