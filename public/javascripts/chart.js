@@ -250,7 +250,8 @@ var mapTimeSeries = function (data, sensorName, label, col) {
     var series = [];
     for (var i = 0; i < data.length; i++) {
         if (data[i].sensorName === sensorName) {
-            var mDate = moment.tz(data[i].timestamp, 'YYYY-MM-DD HH:mm:ss', 'Europe/Berlin');
+            var mDate = moment(data[i].timestamp + ' +02:00', 'YYYY-MM-DD HH:mm:ss ZZ');
+            mDate.add(2, 'hours'); // still don't understand why this is really necessary.
             var millis = new Date(mDate.unix()) * 1000;
             series.push([millis, data[i].degreeCelsius]);
         }
