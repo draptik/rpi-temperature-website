@@ -196,6 +196,7 @@ $(function () {
 
                 // Current time
                 var m = moment(pos.x);
+                m.add(-2, 'hours'); // fucking time stuff
                 $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'))
             };
 
