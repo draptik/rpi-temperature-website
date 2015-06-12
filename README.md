@@ -48,7 +48,7 @@ npm start
 - ~~legend: checkbox, color box and label should be side by side~~
 - ~~Changing selected time series should not alter selection range~~
 - ~~tooltip should show all y values for selected x value (requires data interpolation, check available plugins)~~
-- detail plot: add panning functionality
+- ~~detail plot: add panning functionality~~
 - overview plot: fix margins
 - plots: remove grid borders
 - detail plot: highlight grid dependent on selected range: ie highlight weekends, night time, etc
