@@ -49,6 +49,8 @@ npm start
 - ~~Changing selected time series should not alter selection range~~
 - ~~tooltip should show all y values for selected x value (requires data interpolation, check available plugins)~~
 - ~~detail plot: add panning functionality~~
+- initial load: last 14 days
+- dynamically load older data when scrolling/panning left (ajax)
 - overview plot: fix margins
 - plots: remove grid borders
 - detail plot: highlight grid dependent on selected range: ie highlight weekends, night time, etc
