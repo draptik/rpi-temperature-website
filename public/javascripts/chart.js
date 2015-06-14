@@ -121,7 +121,7 @@ $(function () {
                     color: '#999',
                     enabled: true,
                     start: detailPlot.getData()[0].data[0][0],
-                    end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 100][0],
+                    end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0],
                     callback: rangeselectionCallback
                 }
             });
