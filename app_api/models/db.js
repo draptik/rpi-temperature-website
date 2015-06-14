@@ -1,40 +1,68 @@
 var sqlite3 = require('sqlite3');
 var fs = require('fs');
 
-var dbLocation = process.env.NODE_ENV === 'production'
-		? '/var/www/templog.db'
-		: 'sample_data/templog.db';
+var dbLocation = process.env.NODE_ENV === 'production' ? '/var/www/templog.db' : 'sample_data/templog.db';
 
 var exists = fs.existsSync(dbLocation);
 
 if (!exists) {
-	console.log('db file does not exist.');
+    console.log('db file does not exist.');
 } else {
-	console.log('db file exists.');
+    console.log('db file exists.');
 }
 
 var db = new sqlite3.Database(dbLocation);
 
 module.exports.getAll = function (callback) {
 
-	var sqlQuery = 'SELECT * FROM temps';
-	
-	db.all(sqlQuery, function (err, rows) {
-		if (err !== null) {
-			// TODO Error handling
-			console.log('Error during sql query: ' + err);
-		} else {
-			var temperatureData = [];
+    var sqlQuery = 'SELECT * FROM temps';
 
-			for(var i = 0; i < rows.length; i++) {
-				temperatureData.push({
-					degreeCelsius: rows[i].temp,
-					sensorName: rows[i].ID,
-					timestamp: rows[i].timestamp
-				});
-			}
+    function getByQuery(query, cb) {
+        db.all(sqlQuery, function (err, rows) {
+            if (err !== null) {
+                // TODO Error handling
+                console.log('Error during sql query: ' + err);
+            } else {
+                var temperatureData = [];
 
-			callback(temperatureData);
-		}
-	});
+                for (var i = 0; i < rows.length; i++) {
+                    temperatureData.push({
+                        degreeCelsius: rows[i].temp,
+                        sensorName: rows[i].ID,
+                        timestamp: rows[i].timestamp
+                    });
+                }
+
+                cb(temperatureData);
+            }
+        });
+    };
+
+    getByQuery(sqlQuery, callback);
+};
+module.exports.getLastWeek = function (callback) {
+    var sqlQuery = "SELECT * FROM temps WHERE timestamp BETWEEN datetime('now', '-7 days') AND datetime('now', 'localtime')";
+
+    function getByQuery(query, cb) {
+        db.all(sqlQuery, function (err, rows) {
+            if (err !== null) {
+                // TODO Error handling
+                console.log('Error during sql query: ' + err);
+            } else {
+                var temperatureData = [];
+
+                for (var i = 0; i < rows.length; i++) {
+                    temperatureData.push({
+                        degreeCelsius: rows[i].temp,
+                        sensorName: rows[i].ID,
+                        timestamp: rows[i].timestamp
+                    });
+                }
+
+                cb(temperatureData);
+            }
+        });
+    };
+
+    getByQuery(sqlQuery, callback);
 };
