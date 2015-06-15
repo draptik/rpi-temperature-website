@@ -10,13 +10,19 @@ var colors = {
 };
 
 $(function () {
-    getAll(function (rawdata) {
+    getFortnight(function (rawdata) {
+
+        if (!rawdata) {
+            // TODO Show error message
+            console.log('Sorry, no data found.');
+            return;
+        }
 
         var data = convertDataForFlot(rawdata);
 
         // Legend -------------------------------------------------------------
         var legendContainer = $('#detail-legend');
-        legendContainer.append('<div class="div-table"><div class="div-table-row"><div id="detail-selection-header">FOO</div></div>');
+        legendContainer.append('<div class="div-table"><div class="div-table-row"><div id="detail-selection-header">&nbsp;</div></div>');
         $.each(data, function (key, val) {
             var tablerow = '<div class="div-table-row">' +
                 '<div class="div-table-col"><input type="checkbox" name="' + key + '" checked="checked" id="id' + key + '"></input></div>' +

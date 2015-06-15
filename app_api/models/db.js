@@ -39,7 +39,19 @@ module.exports.getAll = function (callback) {
     var sqlQuery = 'SELECT * FROM temps';
     getByQuery(sqlQuery, callback);
 };
-module.exports.getLastWeek = function (callback) {
-    var sqlQuery = "SELECT * FROM temps WHERE timestamp BETWEEN datetime('now', '-7 days') AND datetime('now', 'localtime')";
-    getByQuery(sqlQuery, callback);
+
+module.exports.getFortnight = function (callback) {
+    var sqlQuery = "SELECT * FROM temps WHERE timestamp BETWEEN datetime('now', '-14 days') AND datetime('now', 'localtime')";
+    getByQuery(sqlQuery, function (data) {
+        if (!data || data.length === 0) {
+            // Fallback: get last 2 weeks which are present in the database
+            var sqlQueryFallback = "SELECT * FROM temps " +
+                "WHERE timestamp " +
+                "   BETWEEN datetime( (select max(timestamp) from temps), '-14 days') " +
+                "   AND datetime((select max(timestamp) from temps), 'localtime');";
+            getByQuery(sqlQueryFallback, callback);
+        } else {
+            callback(data);
+        }
+    });
 };

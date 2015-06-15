@@ -39,3 +39,4 @@ public/javascripts/baseUrl-generated.js
 
 # bower
 public/vendor/bower
+/.brackets.json

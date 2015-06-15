@@ -2,11 +2,19 @@
 // 'baseUrl' is retrieved from generated file 'baseUrl-generated.js'.
 
 var getAll = function (callback) {
-	$.ajax({
-		url: baseUrl + '/api/temperatures',
-		success: function (data) {
-			callback(data);
-		}
-	});
+    $.ajax({
+        url: baseUrl + '/api/temperatures',
+        success: function (data) {
+            callback(data);
+        }
+    });
 };
 
+var getFortnight = function (callback) {
+    $.ajax({
+        url: baseUrl + '/api/temperatures/fortnight',
+        success: function (data) {
+            callback(data);
+        }
+    });
+};
