@@ -18,3 +18,13 @@ var getFortnight = function (callback) {
         }
     });
 };
+
+var getByFilter = function (minDate, maxDate, callback) {
+    console.log('getByFilter called...');
+    $.ajax({
+        url: baseUrl + '/api/temperatures?minDate=' + minDate + '&maxDate=' + maxDate,
+        success: function (data) {
+            callback(data);
+        }
+    });
+};

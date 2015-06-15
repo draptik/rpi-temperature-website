@@ -54,13 +54,18 @@ $(function () {
 
             var rangeselectionCallback = function (o) {
                 var xaxis = detailPlot.getAxes().xaxis;
-                xaxis.options.min = o.start;
-                xaxis.options.max = o.end;
-                detailPlot.setupGrid();
-                detailPlot.draw();
 
-                currentSelection.min = o.start;
-                currentSelection.max = o.end;
+                if (o.start <= xaxis.datamin) {
+                    loadAnotherFortnight(xaxis.datamin, xaxis.datamax);
+                } else {
+                    xaxis.options.min = o.start;
+                    xaxis.options.max = o.end;
+                    detailPlot.setupGrid();
+                    detailPlot.draw();
+
+                    currentSelection.min = o.start;
+                    currentSelection.max = o.end;
+                }
             };
 
             var detailPlaceholder = $('#detail-placeholder');
@@ -203,7 +208,7 @@ $(function () {
                 // Current time
                 var m = moment(pos.x);
                 m.add(-2, 'hours'); // fucking time stuff
-                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'))
+                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
             };
 
             detailPlaceholder.bind('plothover', function (event, pos, item) {
@@ -233,6 +238,26 @@ $(function () {
 
 function clamp(min, value, max) {
     return value < min ? min : (value > max ? max : value);
+};
+
+function loadAnotherFortnight(oldMin, max) {
+    console.log('Reloading with oldMin value: ' + new Date(oldMin));
+    console.log('Reloading with max value: ' + new Date(max));
+
+    getByFilter(oldMin, max, function (rawdata) {
+        console.log('call getByFilter is done.');
+        //        console.log(rawdata);
+        // Update plots
+        if (!rawdata) {
+            // TODO Show error message
+            console.log('Sorry, no data found.');
+            return;
+        }
+
+        var data = convertDataForFlot(rawdata);
+
+        // TODO Update plots
+    });
 };
 
 // Prepare data -------------------------------------------------------------------------------------------

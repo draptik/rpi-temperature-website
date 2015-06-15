@@ -55,3 +55,8 @@ module.exports.getFortnight = function (callback) {
         }
     });
 };
+
+module.exports.getByFilter = function (min, max, callback) {
+    var sqlQuery = "SELECT * FROM temps WHERE timestamp BETWEEN datetime(" + min / 1000 + ", 'unixepoch', '-14 days') AND datetime(" + max / 1000 + ",'unixepoch', 'localtime')";
+    getByQuery(sqlQuery, callback);
+};

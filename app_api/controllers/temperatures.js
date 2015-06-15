@@ -6,10 +6,17 @@ var sendJSONresponse = function (res, status, content) {
 };
 
 module.exports.index = function (req, res) {
-    // console.log('API temperatures.index called..');
-    temperatureBackend.getAll(function (data) {
-        sendJSONresponse(res, 200, data);
-    });
+    console.log('API temperatures.index called..');
+    console.log(req.query);
+    if (req.query && req.query.minDate && req.query.maxDate) {
+        temperatureBackend.getByFilter(req.query.minDate, req.query.maxDate, function (data) {
+            sendJSONresponse(res, 200, data);
+        });
+    } else {
+        temperatureBackend.getAll(function (data) {
+            sendJSONresponse(res, 200, data);
+        });
+    }
 };
 
 module.exports.fortnight = function (req, res) {
