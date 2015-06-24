@@ -163,80 +163,85 @@ function render(rawdata) {
             overviewPlot.draw();
         }
 
-        // CURRENT VALUE IN LEGEND --------------------------------------
-        var updateDetailSelectionTimeout = null;
-        var latestPosition = null;
-
-        function updateDetailSelection() {
-            updateDetailSelectionTimeout = null;
-            var pos = latestPosition;
-            var axes = detailPlot.getAxes();
-            if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-                pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
-                //tooltipContainer.hide('slow');
-                return;
-            }
-
-            var seriesIndex, dataPointInSeries, dataset = plotdata;
-
-            // Iterate of each time series ('seriesIndex')
-            var yMax;
-            for (seriesIndex = 0; seriesIndex < dataset.length; ++seriesIndex) {
-                var series = dataset[seriesIndex];
-
-                // Find the nearest points, x-wise
-                for (dataPointInSeries = 0; series.data.length; ++dataPointInSeries) {
-                    if (series.data[dataPointInSeries][0] > pos.x) {
-                        break;
-                    }
-                }
-
-                // Now interpolate
-                var y,
-                    p1 = series.data[dataPointInSeries - 1],
-                    p2 = series.data[dataPointInSeries];
-
-                if (p1 == null) {
-                    y = p2[1];
-                } else if (p2 == null) {
-                    y = p1[1];
-                } else {
-                    y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-                }
-
-                // Set the correct value for the current sensor
-                if ($.isNumeric(y)) {
-                    var temperatureValueContainer = legendContainer.find('#temperature-value' + series.id);
-                    if (temperatureValueContainer) {
-                        temperatureValueContainer.text(y.toFixed(1));
-                    }
-                }
-
-                if (y > yMax) {
-                    yMax = y;
-                }
-            }
-
-            // Current time
-            var m = moment(pos.x);
-            m.add(-2, 'hours'); // fucking time stuff
-            $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
-        };
-
+        // PLOTHOVER: UPDATE VALUE IN LEGEND
         detailPlaceholder.bind('plothover', function (event, pos, item) {
+            var updateDetailSelectionTimeout = null;
+            var latestPosition = null;
+
+            function updateDetailSelection() {
+                updateDetailSelectionTimeout = null;
+                var pos = latestPosition;
+                var axes = detailPlot.getAxes();
+                if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+                    pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+                    //tooltipContainer.hide('slow');
+                    return;
+                }
+
+                var seriesIndex, dataPointInSeries, dataset = plotdata;
+
+                // Iterate of each time series ('seriesIndex')
+                var yMax;
+                for (seriesIndex = 0; seriesIndex < dataset.length; ++seriesIndex) {
+                    var series = dataset[seriesIndex];
+
+                    // Find the nearest points, x-wise
+                    for (dataPointInSeries = 0; series.data.length; ++dataPointInSeries) {
+                        if (series.data[dataPointInSeries][0] > pos.x) {
+                            break;
+                        }
+                    }
+
+                    // Now interpolate
+                    var y,
+                        p1 = series.data[dataPointInSeries - 1],
+                        p2 = series.data[dataPointInSeries];
+
+                    if (p1 == null) {
+                        y = p2[1];
+                    } else if (p2 == null) {
+                        y = p1[1];
+                    } else {
+                        y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+                    }
+
+                    // Set the correct value for the current sensor
+                    if ($.isNumeric(y)) {
+                        var temperatureValueContainer = legendContainer.find('#temperature-value' + series.id);
+                        if (temperatureValueContainer) {
+                            temperatureValueContainer.text(y.toFixed(1));
+                        }
+                    }
+
+                    if (y > yMax) {
+                        yMax = y;
+                    }
+                }
+
+                // Current time
+                var m = moment(pos.x);
+                m.add(-2, 'hours'); // fucking time stuff
+                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
+            };
+
             latestPosition = pos;
             if (!updateDetailSelectionTimeout) {
                 updateDetailSelectionTimeout = setTimeout(updateDetailSelection, 400);
             }
         });
 
-        function clampOverViewPlot(value) {
-            overviewMin = overviewPlot.getAxes().xaxis.min;
-            overviewMax = overviewPlot.getAxes().xaxis.max;
-            return clamp(overviewMin, value, overviewMax);
-        };
-
+        // PLOTPAN: UPDATE OVERVIEW PLOT
         detailPlaceholder.bind('plotpan', function (event, plot) {
+            function clamp(min, value, max) {
+                return value < min ? min : (value > max ? max : value);
+            };
+
+            function clampOverViewPlot(value) {
+                overviewMin = overviewPlot.getAxes().xaxis.min;
+                overviewMax = overviewPlot.getAxes().xaxis.max;
+                return clamp(overviewMin, value, overviewMax);
+            };
+
             currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
             currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
             overviewPlot.setSelection(currentSelection.min, currentSelection.max);
@@ -247,9 +252,6 @@ function render(rawdata) {
     updatePlot();
 };
 
-function clamp(min, value, max) {
-    return value < min ? min : (value > max ? max : value);
-};
 
 function loadAnotherFortnight(oldMin, max) {
     console.log('Reloading with oldMin value: ' + new Date(oldMin));
