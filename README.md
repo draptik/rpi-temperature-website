@@ -50,7 +50,9 @@ npm start
 - ~~tooltip should show all y values for selected x value (requires data interpolation, check available plugins)~~
 - ~~detail plot: add panning functionality~~
 - ~~initial load: last 14 days~~
-- dynamically load older data when scrolling/panning left (ajax)
+- ~~dynamically load older data when scrolling in overviewplot left (ajax). Return the previous fortnight~~
+- show 'loading spinner gif' for slow ajax requests. Must have, since the REST API on RPi can take up to 10 seconds to return a result
+- dynamically load older data when panning in detailplot left (ajax)
 - overview plot: fix margins
 - plots: remove grid borders
 - detail plot: highlight grid dependent on selected range: ie highlight weekends, night time, etc
