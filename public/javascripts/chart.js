@@ -10,21 +10,33 @@ var colors = {
 };
 
 $(function () {
+    initLegend();
+
+    // Load the last 14 days
     getFortnight(function (rawdata) {
+        render(rawdata)
+    });
+});
 
-        if (!rawdata) {
-            // TODO Show error message
-            console.log('Sorry, no data found.');
-            return;
-        }
+function initLegend() {
+    $('#detail-legend').append('<div class="div-table"><div class="div-table-row"><div id="detail-selection-header">&nbsp;</div></div>');
+};
 
-        var data = convertDataForFlot(rawdata);
+function render(rawdata) {
 
-        // Legend -------------------------------------------------------------
-        var legendContainer = $('#detail-legend');
-        legendContainer.append('<div class="div-table"><div class="div-table-row"><div id="detail-selection-header">&nbsp;</div></div>');
+    if (!rawdata) {
+        // TODO Show error message
+        console.log('Sorry, no data found.');
+        return;
+    }
+
+    var data = convertDataForFlot(rawdata);
+
+    // Legend -------------------------------------------------------------
+    var legendContainer = $('#detail-legend');
+    if (legendContainer.find('.table-row-data').length === 0) {
         $.each(data, function (key, val) {
-            var tablerow = '<div class="div-table-row">' +
+            var tablerow = '<div class="div-table-row table-row-data">' +
                 '<div class="div-table-col"><input type="checkbox" name="' + key + '" checked="checked" id="id' + key + '"></input></div>' +
                 '<div class="div-table-col"><div class="legend-color"><div style="width:4px; height: 0; border: 5px solid ' + colors[key] + '; overflow: hidden;"></div></div></div>' +
                 '<div class="div-table-col"><label class="legend-label" for="id' + key + '">' + val.label + '</label></div>' +
@@ -32,209 +44,208 @@ $(function () {
                 '</div>';
             legendContainer.find('.div-table').append(tablerow);
         });
+    }
+    legendContainer.find("input").click(updatePlot);
 
-        legendContainer.find("input").click(updatePlot);
+    var currentSelection = {
+        min: undefined,
+        max: undefined
+    };
 
-        var currentSelection = {
-            min: undefined,
-            max: undefined
-        };
+    // Main plotting function ---------------------------------------------
+    function updatePlot() {
 
-        // Main plotting function ---------------------------------------------
-        function updatePlot() {
+        var plotdata = [];
 
-            var plotdata = [];
-
-            legendContainer.find('input:checked').each(function () {
-                var key = $(this).attr('name');
-                if (key && data[key]) {
-                    plotdata.push(data[key])
-                }
-            });
-
-            var rangeselectionCallback = function (o) {
-                var xaxis = detailPlot.getAxes().xaxis;
-
-                if (o.start <= xaxis.datamin) {
-                    loadAnotherFortnight(xaxis.datamin, xaxis.datamax);
-                } else {
-                    xaxis.options.min = o.start;
-                    xaxis.options.max = o.end;
-                    detailPlot.setupGrid();
-                    detailPlot.draw();
-
-                    currentSelection.min = o.start;
-                    currentSelection.max = o.end;
-                }
-            };
-
-            var detailPlaceholder = $('#detail-placeholder');
-            var detailPlot = $.plot(detailPlaceholder, plotdata, {
-                xaxis: {
-                    mode: 'time'
-                },
-                yaxis: {
-                    panRange: false
-                },
-                series: {
-                    lines: {
-                        show: true
-                    },
-                    points: {
-                        show: false
-                    }
-                },
-                legend: {
-                    show: false // Note: The legend is configured manually (see legendContainer)
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true,
-                    autoHighlight: false
-                },
-                crosshair: {
-                    mode: 'x'
-                },
-                pan: {
-                    interactive: true
-                }
-            });
-
-            var overviewPlaceholder = $('#overview-placeholder');
-            var overviewData = $.extend(true, [], plotdata);
-            for (var i = 0; i < overviewData.length; i++) {
-                overviewData[i].color = '#ccc';
-                overviewData[i].label = undefined;
+        legendContainer.find('input:checked').each(function () {
+            var key = $(this).attr('name');
+            if (key && data[key]) {
+                plotdata.push(data[key])
             }
+        });
 
-            var overviewPlot = $.plot(overviewPlaceholder, overviewData, {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 1
-                    },
-                    shadowSize: 0,
-                    points: {
-                        show: false
-                    }
-                },
-                xaxis: {
-                    mode: "time"
-                },
-                yaxis: {},
-                legend: {
-                    show: false
-                },
-                grid: {
-                    hoverable: false
-                },
-                rangeselection: {
-                    color: '#999',
-                    enabled: true,
-                    start: detailPlot.getData()[0].data[0][0],
-                    end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0],
-                    callback: rangeselectionCallback
-                }
-            });
+        var rangeselectionCallback = function (o) {
+            var xaxis = detailPlot.getAxes().xaxis;
 
-            // Since the canvas is redrawn after every interaction, we have to manually set the selection range (if it exists)
-            if (currentSelection.min !== undefined && currentSelection.max !== undefined) {
-                var xaxis = detailPlot.getAxes().xaxis;
-                xaxis.options.min = currentSelection.min;
-                xaxis.options.max = currentSelection.max;
+            if (o.start <= xaxis.datamin) {
+                loadAnotherFortnight(xaxis.datamin, xaxis.datamax);
+            } else {
+                xaxis.options.min = o.start;
+                xaxis.options.max = o.end;
                 detailPlot.setupGrid();
                 detailPlot.draw();
 
-                overviewPlot.getOptions().rangeselection.start = currentSelection.min;
-                overviewPlot.getOptions().rangeselection.end = currentSelection.max;
-                overviewPlot.setupGrid();
-                overviewPlot.draw();
+                currentSelection.min = o.start;
+                currentSelection.max = o.end;
             }
-
-            // CURRENT VALUE IN LEGEND --------------------------------------
-            var updateDetailSelectionTimeout = null;
-            var latestPosition = null;
-
-            function updateDetailSelection() {
-                updateDetailSelectionTimeout = null;
-                var pos = latestPosition;
-                var axes = detailPlot.getAxes();
-                if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-                    pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
-                    //tooltipContainer.hide('slow');
-                    return;
-                }
-
-                var seriesIndex, dataPointInSeries, dataset = plotdata;
-
-                // Iterate of each time series ('seriesIndex')
-                var yMax;
-                for (seriesIndex = 0; seriesIndex < dataset.length; ++seriesIndex) {
-                    var series = dataset[seriesIndex];
-
-                    // Find the nearest points, x-wise
-                    for (dataPointInSeries = 0; series.data.length; ++dataPointInSeries) {
-                        if (series.data[dataPointInSeries][0] > pos.x) {
-                            break;
-                        }
-                    }
-
-                    // Now interpolate
-                    var y,
-                        p1 = series.data[dataPointInSeries - 1],
-                        p2 = series.data[dataPointInSeries];
-
-                    if (p1 == null) {
-                        y = p2[1];
-                    } else if (p2 == null) {
-                        y = p1[1];
-                    } else {
-                        y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-                    }
-
-                    // Set the correct value for the current sensor
-                    if ($.isNumeric(y)) {
-                        var temperatureValueContainer = legendContainer.find('#temperature-value' + series.id);
-                        if (temperatureValueContainer) {
-                            temperatureValueContainer.text(y.toFixed(1));
-                        }
-                    }
-
-                    if (y > yMax) {
-                        yMax = y;
-                    }
-                }
-
-                // Current time
-                var m = moment(pos.x);
-                m.add(-2, 'hours'); // fucking time stuff
-                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
-            };
-
-            detailPlaceholder.bind('plothover', function (event, pos, item) {
-                latestPosition = pos;
-                if (!updateDetailSelectionTimeout) {
-                    updateDetailSelectionTimeout = setTimeout(updateDetailSelection, 400);
-                }
-            });
-
-            function clampOverViewPlot(value) {
-                overviewMin = overviewPlot.getAxes().xaxis.min;
-                overviewMax = overviewPlot.getAxes().xaxis.max;
-                return clamp(overviewMin, value, overviewMax);
-            };
-
-            detailPlaceholder.bind('plotpan', function (event, plot) {
-                currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
-                currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
-                overviewPlot.setSelection(currentSelection.min, currentSelection.max);
-            });
-
         };
 
-        updatePlot();
-    });
-});
+        var detailPlaceholder = $('#detail-placeholder');
+        var detailPlot = $.plot(detailPlaceholder, plotdata, {
+            xaxis: {
+                mode: 'time'
+            },
+            yaxis: {
+                panRange: false
+            },
+            series: {
+                lines: {
+                    show: true
+                },
+                points: {
+                    show: false
+                }
+            },
+            legend: {
+                show: false // Note: The legend is configured manually (see legendContainer)
+            },
+            grid: {
+                hoverable: true,
+                clickable: true,
+                autoHighlight: false
+            },
+            crosshair: {
+                mode: 'x'
+            },
+            pan: {
+                interactive: true
+            }
+        });
+
+        var overviewPlaceholder = $('#overview-placeholder');
+        var overviewData = $.extend(true, [], plotdata);
+        for (var i = 0; i < overviewData.length; i++) {
+            overviewData[i].color = '#ccc';
+            overviewData[i].label = undefined;
+        }
+
+        var overviewPlot = $.plot(overviewPlaceholder, overviewData, {
+            series: {
+                lines: {
+                    show: true,
+                    lineWidth: 1
+                },
+                shadowSize: 0,
+                points: {
+                    show: false
+                }
+            },
+            xaxis: {
+                mode: "time"
+            },
+            yaxis: {},
+            legend: {
+                show: false
+            },
+            grid: {
+                hoverable: false
+            },
+            rangeselection: {
+                color: '#999',
+                enabled: true,
+                start: detailPlot.getData()[0].data[0][0],
+                end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0],
+                callback: rangeselectionCallback
+            }
+        });
+
+        // Since the canvas is redrawn after every interaction, we have to manually set the selection range (if it exists)
+        if (currentSelection.min !== undefined && currentSelection.max !== undefined) {
+            var xaxis = detailPlot.getAxes().xaxis;
+            xaxis.options.min = currentSelection.min;
+            xaxis.options.max = currentSelection.max;
+            detailPlot.setupGrid();
+            detailPlot.draw();
+
+            overviewPlot.getOptions().rangeselection.start = currentSelection.min;
+            overviewPlot.getOptions().rangeselection.end = currentSelection.max;
+            overviewPlot.setupGrid();
+            overviewPlot.draw();
+        }
+
+        // CURRENT VALUE IN LEGEND --------------------------------------
+        var updateDetailSelectionTimeout = null;
+        var latestPosition = null;
+
+        function updateDetailSelection() {
+            updateDetailSelectionTimeout = null;
+            var pos = latestPosition;
+            var axes = detailPlot.getAxes();
+            if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+                pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+                //tooltipContainer.hide('slow');
+                return;
+            }
+
+            var seriesIndex, dataPointInSeries, dataset = plotdata;
+
+            // Iterate of each time series ('seriesIndex')
+            var yMax;
+            for (seriesIndex = 0; seriesIndex < dataset.length; ++seriesIndex) {
+                var series = dataset[seriesIndex];
+
+                // Find the nearest points, x-wise
+                for (dataPointInSeries = 0; series.data.length; ++dataPointInSeries) {
+                    if (series.data[dataPointInSeries][0] > pos.x) {
+                        break;
+                    }
+                }
+
+                // Now interpolate
+                var y,
+                    p1 = series.data[dataPointInSeries - 1],
+                    p2 = series.data[dataPointInSeries];
+
+                if (p1 == null) {
+                    y = p2[1];
+                } else if (p2 == null) {
+                    y = p1[1];
+                } else {
+                    y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+                }
+
+                // Set the correct value for the current sensor
+                if ($.isNumeric(y)) {
+                    var temperatureValueContainer = legendContainer.find('#temperature-value' + series.id);
+                    if (temperatureValueContainer) {
+                        temperatureValueContainer.text(y.toFixed(1));
+                    }
+                }
+
+                if (y > yMax) {
+                    yMax = y;
+                }
+            }
+
+            // Current time
+            var m = moment(pos.x);
+            m.add(-2, 'hours'); // fucking time stuff
+            $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
+        };
+
+        detailPlaceholder.bind('plothover', function (event, pos, item) {
+            latestPosition = pos;
+            if (!updateDetailSelectionTimeout) {
+                updateDetailSelectionTimeout = setTimeout(updateDetailSelection, 400);
+            }
+        });
+
+        function clampOverViewPlot(value) {
+            overviewMin = overviewPlot.getAxes().xaxis.min;
+            overviewMax = overviewPlot.getAxes().xaxis.max;
+            return clamp(overviewMin, value, overviewMax);
+        };
+
+        detailPlaceholder.bind('plotpan', function (event, plot) {
+            currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
+            currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
+            overviewPlot.setSelection(currentSelection.min, currentSelection.max);
+        });
+
+    };
+
+    updatePlot();
+};
 
 function clamp(min, value, max) {
     return value < min ? min : (value > max ? max : value);
@@ -246,17 +257,7 @@ function loadAnotherFortnight(oldMin, max) {
 
     getByFilter(oldMin, max, function (rawdata) {
         console.log('call getByFilter is done.');
-        //        console.log(rawdata);
-        // Update plots
-        if (!rawdata) {
-            // TODO Show error message
-            console.log('Sorry, no data found.');
-            return;
-        }
-
-        var data = convertDataForFlot(rawdata);
-
-        // TODO Update plots
+        render(rawdata);
     });
 };
 
