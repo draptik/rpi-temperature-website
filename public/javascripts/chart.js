@@ -34,7 +34,8 @@ function render(rawdata) {
 
     // Legend -------------------------------------------------------------
     var legendContainer = $('#detail-legend');
-    if (legendContainer.find('.table-row-data').length === 0) {
+    var legendHasNoData = legendContainer.find('.table-row-data').length === 0;
+    if (legendHasNoData) {
         $.each(data, function (key, val) {
             var tablerow = '<div class="div-table-row table-row-data">' +
                 '<div class="div-table-col"><input type="checkbox" name="' + key + '" checked="checked" id="id' + key + '"></input></div>' +
