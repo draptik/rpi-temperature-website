@@ -148,7 +148,11 @@ function render(rawdata) {
             xaxis: {
                 mode: "time"
             },
-            yaxis: {},
+            yaxis: {
+                labelWidth: 15,
+                reserveSpace: true,
+                show: false
+            },
             legend: {
                 show: false
             },
