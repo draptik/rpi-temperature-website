@@ -10,9 +10,10 @@ Otherwise visit [http://localhost:3000/temperatures](http://localhost:3000//temp
 
 ## TL;DR Build instructions
 
-Prerequisites: [node.js](https://nodejs.org/).
+Prerequisites: 
 
-[Bower.js](http://bower.io/) is optional: All frontend stuff from bower is included in `/vendor/bower` (ie jquery, bootstrap, etc).
+- [node.js](https://nodejs.org/)
+- [Bower.js](http://bower.io/)
 
 ```
 npm install
@@ -53,7 +54,7 @@ npm start
 - ~~dynamically load older data when scrolling in overviewplot left (ajax). Return the previous fortnight~~
 - ~~show 'loading spinner gif' for slow ajax requests. Must have, since the REST API on RPi can take up to 10 seconds to return a result~~
 - ~~dynamically load older data when panning in detailplot left (ajax)~~
-- overview plot: fix margins
+- ~~overview plot: fix margins~~
 - plots: remove grid borders
 - detail plot: highlight grid dependent on selected range: ie highlight weekends, night time, etc
 - add buttons for selecting specific ranges (ie last 24h, last week, last month) and jumping to previous/next range.
