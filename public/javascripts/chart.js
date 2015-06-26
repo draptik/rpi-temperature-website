@@ -247,21 +247,24 @@ function render(rawdata) {
 
         // PLOTPAN: UPDATE OVERVIEW PLOT
         detailPlaceholder.bind('plotpan', function (event, plot) {
-            function clamp(min, value, max) {
-                return value < min ? min : (value > max ? max : value);
-            };
+            if (detailPlot.getAxes().xaxis.datamin <= overviewPlot.getAxes().xaxis.datamin) {
+                loadAnotherFortnight(overviewPlot.getAxes().xaxis.datamin, overviewPlot.getAxes().xaxis.datamax);
+            } else {
+                function clamp(min, value, max) {
+                    return value < min ? min : (value > max ? max : value);
+                };
 
-            function clampOverViewPlot(value) {
-                overviewMin = overviewPlot.getAxes().xaxis.min;
-                overviewMax = overviewPlot.getAxes().xaxis.max;
-                return clamp(overviewMin, value, overviewMax);
-            };
+                function clampOverViewPlot(value) {
+                    overviewMin = overviewPlot.getAxes().xaxis.min;
+                    overviewMax = overviewPlot.getAxes().xaxis.max;
+                    return clamp(overviewMin, value, overviewMax);
+                };
 
-            currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
-            currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
-            overviewPlot.setSelection(currentSelection.min, currentSelection.max);
+                currentSelection.min = clampOverViewPlot(detailPlot.getAxes().xaxis.min);
+                currentSelection.max = clampOverViewPlot(detailPlot.getAxes().xaxis.max);
+                overviewPlot.setSelection(currentSelection.min, currentSelection.max);
+            }
         });
-
     };
 
     updatePlot();
