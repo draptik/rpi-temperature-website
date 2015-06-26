@@ -116,7 +116,8 @@ function render(rawdata) {
                 hoverable: true,
                 clickable: true,
                 autoHighlight: false,
-                borderWidth: 0
+                borderWidth: 0,
+                markings: weekendAreas
             },
             crosshair: {
                 mode: 'x'
@@ -163,7 +164,8 @@ function render(rawdata) {
                     'left': 1,
                     'bottom': 1
                 },
-                borderColor: 'darkgray'
+                borderColor: 'darkgray',
+                markings: weekendAreas
             },
             rangeselection: {
                 color: '#999',
@@ -286,6 +288,33 @@ function render(rawdata) {
     updatePlot();
 };
 
+
+/* From flot demo: http://www.flotcharts.org/flot/examples/visitors/index.html */
+function weekendAreas(axes) {
+    var markings = [],
+        d = new Date(axes.xaxis.min);
+
+    // go to the first Saturday
+    d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7))
+    d.setUTCSeconds(0);
+    d.setUTCMinutes(0);
+    d.setUTCHours(0);
+
+    var i = d.getTime();
+
+    do {
+        markings.push({
+            xaxis: {
+                from: i,
+                to: i + 2 * 24 * 60 * 60 * 1000
+            },
+            color: '#FBF8EF'
+        });
+        i += 7 * 24 * 60 * 60 * 1000;
+    } while (i < axes.xaxis.max);
+
+    return markings;
+};
 
 function loadAnotherFortnight(oldMin, max) {
     console.log('Reloading with oldMin value: ' + new Date(oldMin));
