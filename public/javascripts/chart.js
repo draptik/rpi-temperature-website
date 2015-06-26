@@ -80,6 +80,7 @@ function render(rawdata) {
         });
 
         var rangeselectionCallback = function (o) {
+            console.log('rangeselectionCallback invoked...');
             var xaxis = detailPlot.getAxes().xaxis;
 
             if (o.start <= xaxis.datamin) {
@@ -259,8 +260,14 @@ function render(rawdata) {
 
         // PLOTPAN: UPDATE OVERVIEW PLOT
         detailPlaceholder.bind('plotpan', function (event, plot) {
-            if (detailPlot.getAxes().xaxis.datamin <= overviewPlot.getAxes().xaxis.datamin) {
-                loadAnotherFortnight(overviewPlot.getAxes().xaxis.datamin, overviewPlot.getAxes().xaxis.datamax);
+            var currentMin = plot.getXAxes()[0].min;
+            var dataMin = plot.getXAxes()[0].datamin;
+            //            console.log('-------')
+            //            console.log(new Date(currentMin));
+            //            console.log(new Date(dataMin));
+            if (currentMin <= dataMin) {
+                loadAnotherFortnight(dataMin, overviewPlot.getAxes().xaxis.datamax);
+                return;
             } else {
                 function clamp(min, value, max) {
                     return value < min ? min : (value > max ? max : value);
