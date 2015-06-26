@@ -117,7 +117,8 @@ function render(rawdata) {
             grid: {
                 hoverable: true,
                 clickable: true,
-                autoHighlight: false
+                autoHighlight: false,
+                borderWidth: 0
             },
             crosshair: {
                 mode: 'x'
@@ -149,7 +150,7 @@ function render(rawdata) {
                 mode: "time"
             },
             yaxis: {
-                labelWidth: 15,
+                labelWidth: 16,
                 reserveSpace: true,
                 show: false
             },
@@ -157,7 +158,14 @@ function render(rawdata) {
                 show: false
             },
             grid: {
-                hoverable: false
+                hoverable: false,
+                borderWidth: {
+                    'top': 1,
+                    'right': 1,
+                    'left': 1,
+                    'bottom': 1
+                },
+                borderColor: 'darkgray'
             },
             rangeselection: {
                 color: '#999',
