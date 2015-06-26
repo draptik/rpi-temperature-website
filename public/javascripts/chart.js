@@ -9,7 +9,21 @@ var colors = {
     7: "rgb(140,172,198)"
 };
 
+var target = $('#target');
+var spinner = $('#spinner');
+$(document)
+    .ajaxStart(function () {
+        $('html, body').css('cursor', 'wait');
+        target.overlay();
+    })
+    .ajaxStop(function () {
+        $('html, body').css('cursor', 'auto');
+        target.overlayout();
+    });
+
 $(function () {
+
+
     initLegend();
 
     // Load the last 14 days

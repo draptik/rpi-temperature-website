@@ -19,6 +19,7 @@
     "moment": "~2.10.3",
     "flot": "~0.8.3",
     "moment-timezone": "~0.4.0",
-    "datejs": "~1.0.0-rc3"
+    "datejs": "~1.0.0-rc3",
+    "font-awesome": "~4.3.0"
   }
 }
