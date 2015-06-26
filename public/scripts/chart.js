@@ -10,7 +10,6 @@ var colors = {
 };
 
 var target = $('#target');
-var spinner = $('#spinner');
 $(document)
     .ajaxStart(function () {
         $('html, body').css('cursor', 'wait');
@@ -22,8 +21,6 @@ $(document)
     });
 
 $(function () {
-
-
     initLegend();
 
     // Load the last 14 days
@@ -249,7 +246,7 @@ function render(rawdata) {
                 // Current time
                 var m = moment(pos.x);
                 m.add(-2, 'hours'); // fucking time stuff
-                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (dd)'));
+                $('#detail-selection-header').text(m.format('YYYY-MM-DD HH:mm (ddd)'));
             };
 
             latestPosition = pos;

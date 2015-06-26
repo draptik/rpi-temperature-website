@@ -29,19 +29,19 @@ input[type=checkbox] {
     width: auto;
     /*250px;*/
 
+    font-weight: normal;
     display: inline-block;
     vertical-align: top;
 }
 
-#tooltip-title {
+#detail-selection-header {
     font-weight: bold;
 }
 
 .div-table {
     display: table;
     width: auto;
-    background-color: #eee;
-    border: 1px solid #666666;
+    background-color: #fff;
     border-spacing: 5px;
 }
 
@@ -55,9 +55,14 @@ input[type=checkbox] {
     float: left;
     display: table-column;
     width: auto;
+    font-weight: normal;
 }
 
 .col-right {
     padding-left: 10px;
     float: right;
+}
+
+div[id^="temperature-value"]::after {
+    content: " \00b0 C";
 }
