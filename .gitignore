@@ -32,7 +32,7 @@ node_modules
 npm-debug.log
 
 # Current workaround...
-public/javascripts/baseUrl-generated.js
+public/scripts/baseUrl-generated.js
 
 # Sublime project files
 *.sublime-*
