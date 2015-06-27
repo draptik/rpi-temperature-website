@@ -18,8 +18,11 @@ Prerequisites:
 ```
 npm install
 ```
-
 `npm install`: gets the backend dependencies (ie express.js, sqlite3-api for express).
+
+```
+bower install
+```
 `bower install`: gets the frontend dependencies.
 
 ## Quick test
