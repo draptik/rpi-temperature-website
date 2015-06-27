@@ -134,6 +134,21 @@ function render(rawdata) {
             overviewData[i].label = undefined;
         }
 
+
+        // EXPERIMENT START -----------------------------
+        //        var initialOverview = {
+        //            start: {},
+        //            end: {}
+        //        }
+        var rangeselectionEnd = detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0];
+        var endDate = new Date(rangeselectionEnd);
+        endDate.setDate(endDate.getDate() - 1); // endDate = endDate - 1day
+        var rangeselectionInitialStart = endDate.getTime();
+        detailPlot.getAxes().xaxis.options.min = rangeselectionInitialStart;
+        detailPlot.setupGrid();
+        detailPlot.draw();
+        // EXPERIMENT STOP -----------------------------
+
         var overviewPlot = $.plot(overviewPlaceholder, overviewData, {
             series: {
                 lines: {
@@ -170,8 +185,8 @@ function render(rawdata) {
             rangeselection: {
                 color: '#999',
                 enabled: true,
-                start: detailPlot.getData()[0].data[0][0],
-                end: detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0],
+                start: rangeselectionInitialStart,
+                end: rangeselectionEnd,
                 callback: rangeselectionCallback
             }
         });
@@ -315,6 +330,41 @@ function weekendAreas(axes) {
 
     return markings;
 };
+
+function nightAreas(axes) {
+    var markings = [],
+        d = new Date(axes.xaxis.min);
+
+    // go to the first sunrise
+    var sunShine = rest.getSunData(d, axes.xaxis.max);
+
+    //    var minPlusOneDay = (d.getUTCDay() + 1);
+    //    var minPlusOneDayInOrigData = 1; // TODO Find closest data point
+    //    var firstDayData = []; // TODO create array [min ... minPlusOneDayInOrigData]
+    //    var firstSunsetInData = 1;
+    //    var firstSunriseInData = 1;
+
+    d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7))
+    d.setUTCSeconds(0);
+    d.setUTCMinutes(0);
+    d.setUTCHours(0);
+
+    var i = d.getTime();
+
+    do {
+        markings.push({
+            xaxis: {
+                from: i,
+                to: i + 2 * 24 * 60 * 60 * 1000
+            },
+            color: '#FBF8EF'
+        });
+        i += 7 * 24 * 60 * 60 * 1000;
+    } while (i < axes.xaxis.max);
+
+    return markings;
+};
+
 
 function loadAnotherFortnight(oldMin, max) {
     console.log('Reloading with oldMin value: ' + new Date(oldMin));
