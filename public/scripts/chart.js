@@ -134,20 +134,22 @@ function render(rawdata) {
             overviewData[i].label = undefined;
         }
 
+        function initializeOverview(plot) {
+            var rangeselectionEnd = plot.getData()[0].data[plot.getData()[0].data.length - 1][0];
+            var endDate = new Date(rangeselectionEnd);
+            endDate.setDate(endDate.getDate() - 1); // endDate = endDate - 1day
+            var rangeselectionInitialStart = endDate.getTime();
+            plot.getAxes().xaxis.options.min = rangeselectionInitialStart;
+            plot.setupGrid();
+            plot.draw();
 
-        // EXPERIMENT START -----------------------------
-        //        var initialOverview = {
-        //            start: {},
-        //            end: {}
-        //        }
-        var rangeselectionEnd = detailPlot.getData()[0].data[detailPlot.getData()[0].data.length - 1][0];
-        var endDate = new Date(rangeselectionEnd);
-        endDate.setDate(endDate.getDate() - 1); // endDate = endDate - 1day
-        var rangeselectionInitialStart = endDate.getTime();
-        detailPlot.getAxes().xaxis.options.min = rangeselectionInitialStart;
-        detailPlot.setupGrid();
-        detailPlot.draw();
-        // EXPERIMENT STOP -----------------------------
+            var initialOverview = {
+                start: rangeselectionInitialStart,
+                end: rangeselectionEnd
+            };
+            return initialOverview;
+        }
+        var overview = initializeOverview(detailPlot);
 
         var overviewPlot = $.plot(overviewPlaceholder, overviewData, {
             series: {
@@ -185,8 +187,8 @@ function render(rawdata) {
             rangeselection: {
                 color: '#999',
                 enabled: true,
-                start: rangeselectionInitialStart,
-                end: rangeselectionEnd,
+                start: overview.start,
+                end: overview.end,
                 callback: rangeselectionCallback
             }
         });
