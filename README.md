@@ -62,8 +62,8 @@ npm start
 - ~~plots: remove grid borders~~
 - detail plot: highlight grid dependent on selected range: 
     - ~~highlight weekends (sample at http://www.flotcharts.org/flot/examples/visitors/index.html),~~
-    - ~~higlight night time (sunrise/sunset)
+    - ~~higlight night time (sunrise/sunset)~~
         - ~~external API (f.ex. http://sunrise-sunset.org/api)~~
-        - calculated sunrise/sunset values (f.ex. https://github.com/mourner/suncalc)~~
+        - ~~calculated sunrise/sunset values (f.ex. https://github.com/mourner/suncalc)~~
 - add buttons for selecting specific ranges (ie last 24h, last week, last month) and jumping to previous/next range.
 - Statistics
