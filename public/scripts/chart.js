@@ -345,12 +345,12 @@ function nightAreas(axes) {
         var t = SunCalc.getTimes(entry, lat, lng);
         markings.push({
             xaxis: {
-                from: t.sunrise.getTime() <= axes.xaxis.min ? axes.xaxis.min : t.sunrise.getTime(),
-                to: t.sunset.getTime() >= axes.xaxis.max ? axes.xaxis.max : t.sunset.getTime()
+                from: (t.sunrise.getTime() + (1000 * 60 * 60 * 2)) <= axes.xaxis.min ? axes.xaxis.min : (t.sunrise.getTime() + (1000 * 60 * 60 * 2)),
+                to: t.sunset.getTime() >= axes.xaxis.max ? axes.xaxis.max : (t.sunset.getTime() + (1000 * 60 * 60 * 2))
             },
             color: '#ffff99'
         });
-        if (entry + day > axes.xaxis.max) {
+        if (entry + day > axes.xaxis.max + (1000 * 60 * 60 * 2)) {
             break;
         }
     }
