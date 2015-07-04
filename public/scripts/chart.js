@@ -117,7 +117,7 @@ function render(rawdata) {
                 clickable: true,
                 autoHighlight: false,
                 borderWidth: 0,
-                markings: weekendAreas
+                markings: nightAreas
             },
             crosshair: {
                 mode: 'x'
@@ -303,6 +303,7 @@ function render(rawdata) {
     };
 
     updatePlot();
+
 };
 
 
@@ -334,35 +335,25 @@ function weekendAreas(axes) {
 };
 
 function nightAreas(axes) {
-    var markings = [],
-        d = new Date(axes.xaxis.min);
+    var lat = 49.477246;
+    var lng = 10.989707;
+    var markings = [];
 
-    // go to the first sunrise
-    var sunShine = rest.getSunData(d, axes.xaxis.max);
-
-    //    var minPlusOneDay = (d.getUTCDay() + 1);
-    //    var minPlusOneDayInOrigData = 1; // TODO Find closest data point
-    //    var firstDayData = []; // TODO create array [min ... minPlusOneDayInOrigData]
-    //    var firstSunsetInData = 1;
-    //    var firstSunriseInData = 1;
-
-    d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7))
-    d.setUTCSeconds(0);
-    d.setUTCMinutes(0);
-    d.setUTCHours(0);
-
-    var i = d.getTime();
-
-    do {
+    var day = 24 * 60 * 60 * 1000; // ms
+    for (var i = 0; true; i++) {
+        var entry = axes.xaxis.min + (i * day);
+        var t = SunCalc.getTimes(entry, lat, lng);
         markings.push({
             xaxis: {
-                from: i,
-                to: i + 2 * 24 * 60 * 60 * 1000
+                from: t.sunrise.getTime() <= axes.xaxis.min ? axes.xaxis.min : t.sunrise.getTime(),
+                to: t.sunset.getTime() >= axes.xaxis.max ? axes.xaxis.max : t.sunset.getTime()
             },
-            color: '#FBF8EF'
+            color: '#ffff99'
         });
-        i += 7 * 24 * 60 * 60 * 1000;
-    } while (i < axes.xaxis.max);
+        if (entry + day > axes.xaxis.max) {
+            break;
+        }
+    }
 
     return markings;
 };

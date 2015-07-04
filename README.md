@@ -60,6 +60,10 @@ npm start
 - ~~dynamically load older data when panning in detailplot left (ajax)~~
 - ~~overview plot: fix margins~~
 - ~~plots: remove grid borders~~
-- detail plot: highlight grid dependent on selected range: ie highlight weekends (sample at http://www.flotcharts.org/flot/examples/visitors/index.html), night time (sunrise/sunset http://sunrise-sunset.org/api), etc
+- detail plot: highlight grid dependent on selected range: 
+    - ~~highlight weekends (sample at http://www.flotcharts.org/flot/examples/visitors/index.html),~~
+    - ~~higlight night time (sunrise/sunset)
+        - ~~external API (f.ex. http://sunrise-sunset.org/api)~~
+        - calculated sunrise/sunset values (f.ex. https://github.com/mourner/suncalc)~~
 - add buttons for selecting specific ranges (ie last 24h, last week, last month) and jumping to previous/next range.
 - Statistics
