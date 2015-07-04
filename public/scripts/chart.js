@@ -340,17 +340,29 @@ function nightAreas(axes) {
     var markings = [];
 
     var day = 24 * 60 * 60 * 1000; // ms
+    var offset = (1000 * 60 * 60 * 2); // ms
+
+    var previousSunset = axes.xaxis.min;
     for (var i = 0; true; i++) {
         var entry = axes.xaxis.min + (i * day);
         var t = SunCalc.getTimes(entry, lat, lng);
-        markings.push({
-            xaxis: {
-                from: (t.sunrise.getTime() + (1000 * 60 * 60 * 2)) <= axes.xaxis.min ? axes.xaxis.min : (t.sunrise.getTime() + (1000 * 60 * 60 * 2)),
-                to: t.sunset.getTime() >= axes.xaxis.max ? axes.xaxis.max : (t.sunset.getTime() + (1000 * 60 * 60 * 2))
-            },
-            color: '#ffff99'
-        });
-        if (entry + day > axes.xaxis.max + (1000 * 60 * 60 * 2)) {
+
+        var currentSunset = t.sunset.getTime() + offset <= axes.xaxis.min ? axes.xaxis.min : (t.sunset.getTime() + offset);
+        var sunrise = t.sunrise.getTime() + offset >= axes.xaxis.max ? axes.xaxis.max : (t.sunrise.getTime() + offset);
+
+        if (previousSunset <= sunrise) {
+            markings.push({
+                xaxis: {
+                    from: previousSunset,
+                    to: sunrise
+                },
+                color: '#B0C4DE'
+            });
+        }
+
+        previousSunset = currentSunset;
+
+        if (entry > axes.xaxis.max + offset) {
             break;
         }
     }
