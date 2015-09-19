@@ -40,3 +40,5 @@ public/scripts/baseUrl-generated.js
 # bower
 public/vendor/bower
 /.brackets.json
+
+public/javascripts

@@ -42,7 +42,7 @@ Should look something like this:
 ## Production setup
 
 ```
-export SET_ENV=production
+export NODE_ENV=production
 npm start
 ```
 
