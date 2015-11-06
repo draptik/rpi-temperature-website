@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= Foo
+
+    // vendor libraries
+
+    // custom stylesheets
+    link(rel='stylesheet', href='/stylesheets/playground.css')
+
+    // fonts
+    link(rel='stylesheet' href='/fonts/css/open-sans-font.css')
+    link(rel='stylesheet' href='/fonts/css/lato-font.css')
+
+  body
+    nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
+      .container
+        .navbar-header
+          .navbar-brand IoT @home
+
+    h1 Current temperatures
+      .row.entry
+        .temp-value 18.8
+        .min-max-box
+          table
+            tbody
+              tr
+                td
+                  .temp-max2 22.3
+              tr
+                td
+                  .temp-min2 17.2
+        .location Erdgeschoss
+
+    // basic js libraries
+
+    // charting libraries
+
+    // custom libraries
