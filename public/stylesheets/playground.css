@@ -1,0 +1,41 @@
+/*
+COLORS
+http://paletton.com/#uid=13-0u0kfZfu2zKM7NqnuE8rO02l
+http://paletton.com/palette.php?uid=53-0u0kfZfu2zKM7NqnuE8rO02l
+*/
+
+body { background-color: #2B3E50; }
+h1 { font-family: 'Open Sans'; font-size: 36px; color: #C2CAD2; }
+/*h1 { font-family: 'Lato'; font-size: 36px; }*/
+
+.row { border: 1px dashed gray; }
+
+.entry * { display: inline-block; }
+/*.entry { font-family: 'Open Sans'; }*/
+.entry { font-family: 'Lato'; }
+.entry { padding-left: 30px; }
+.entry { color: #6A7988; }
+
+.entry:hover { background-color: #7B6D3E; }
+.entry:hover { color: #C2CAD2; }
+
+.temp-value { font-size: 54px; }
+.temp-value { font-weight: bolder; }
+/*
+.temp-min { font-size: 24px; }
+.temp-max { font-size: 24px; padding-left: 8px; }
+*/
+.min-max-box * { display: block; padding-left: 2px; }
+.temp-min2 { font-size: 18px; }
+.temp-max2 { font-size: 18px; }
+
+.location { font-size: 26px; min-width: 250px; }
+
+/*Note: This only adds padding-left if the screen size is wider than 400px*/
+@media only screen and (min-width: 400px) {
+	.location { padding-left: 18px; }	
+}
+
+
+.location:hover { font-size: 32px; }
+
