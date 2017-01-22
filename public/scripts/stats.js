@@ -1,8 +1,5 @@
 
 $(function () {
-
-    $('.datepicker').pickadate();
-
     getStatsByDate('2015-04-19', function (d) {
         render(d);
     });
