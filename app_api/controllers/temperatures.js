@@ -29,3 +29,9 @@ module.exports.fortnight = function (req, res) {
         sendJSONresponse(res, 200, data);
     });
 };
+
+module.exports.statisticsForDay = function (req, res) {
+    temperatureBackend.getStatsForDay(req.query.searchDate, function (data) {
+        sendJSONresponse(res, 200, data);
+    });
+};

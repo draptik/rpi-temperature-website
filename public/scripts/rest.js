@@ -28,3 +28,13 @@ var getByFilter = function (minDate, maxDate, callback) {
         }
     });
 };
+
+var getStatsByDate = function (searchDate, callback) {
+    console.log('getStatsByDate called...');
+    $.ajax({
+        url: baseUrl + '/api/statistics?searchDate=' + searchDate,
+        success: function (data) {
+            callback(data);
+        }
+    });
+}

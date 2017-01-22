@@ -7,11 +7,9 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 
 var routes = require('./app_server/routes/index');
-var temperatures = require('./app_server/routes/temperatures');
 
 // adding the REST API
 var routesApi = require('./app_api/routes/index');
-
 
 var app = express();
 
@@ -28,7 +26,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/temperatures', temperatures);
 
 // adding the REST API
 app.use('/api', routesApi);

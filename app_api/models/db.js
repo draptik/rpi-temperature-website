@@ -35,6 +35,44 @@ var getByQuery = function (query, cb) {
 };
 
 
+var getForStats = function (query, cb) {
+    db.all(query, function (err, rows) {
+        if (err !== null) {
+            // TODO Error handling
+            console.log('Error during sql query: ' + err);
+        } else {
+            var stats = [];
+
+            for (var i = 0; i < rows.length; i++) {
+                stats.push({
+                    avg: rows[i].average,
+                    min: rows[i].minimum,
+                    max: rows[i].maximum,
+                    name: rows[i].ID,
+                    date: rows[i].date
+                });
+            }
+
+            cb(stats);
+        }
+    });
+};
+
+/** searchDate must be string in form of YYYY-MM-DD */
+module.exports.getStatsForDay = function (searchDate, callback) {
+
+    var sqlQuery = 'select ';
+    sqlQuery += '  date(timestamp) as \'date\'';
+    sqlQuery += ', ID';
+    sqlQuery += ', round(avg(temp), 1) as \'average\'';
+    sqlQuery += ', round(min(temp), 1) as \'minimum\'';
+    sqlQuery += ', round(max(temp), 1) as \'maximum\'';
+    sqlQuery += ' from temps ';
+    sqlQuery += ' where date(timestamp) = \'' + searchDate + '\''; // sql injection
+    sqlQuery += ' group by date(timestamp), ID';
+    getForStats(sqlQuery, callback);
+}
+
 module.exports.getAll = function (callback) {
     var sqlQuery = 'SELECT * FROM temps';
     getByQuery(sqlQuery, callback);
