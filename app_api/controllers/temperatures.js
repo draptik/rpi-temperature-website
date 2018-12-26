@@ -1,8 +1,20 @@
 var temperatureBackend = require('../models/db');
 
+var filterContent = function(data) {
+    var minRealisticTemperatureInDegreeCelsius = -40;
+    var maxRealisticTemperatureInDegreeCelsius = 100;
+
+    var filteredContent = data.filter(function(x) {
+        return x.degreeCelsius > minRealisticTemperatureInDegreeCelsius &&
+	       x.degreeCelsius < maxRealisticTemperatureInDegreeCelsius;
+    });
+
+    return filteredContent;
+}
+
 var sendJSONresponse = function (res, status, content) {
     res.status(status);
-    res.json(content);
+    res.json(filterContent(content));
 };
 
 module.exports.index = function (req, res) {
