@@ -47,3 +47,9 @@ module.exports.statisticsForDay = function (req, res) {
         sendJSONresponse(res, 200, data);
     });
 };
+
+module.exports.apiByRowId = function (req, res) {
+    temperatureBackend.getNewerThanRowId(req.query.rowId, function (data) {
+	sendJSONresponse(res, 200, data);
+    });
+};

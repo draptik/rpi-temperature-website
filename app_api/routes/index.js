@@ -8,4 +8,6 @@ router.get('/temperatures', ctrlTemperatures.index);
 
 router.get('/statistics', ctrlTemperatures.statisticsForDay);
 
+router.get('/byRowId', ctrlTemperatures.apiByRowId);
+
 module.exports = router;

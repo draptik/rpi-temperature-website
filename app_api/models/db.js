@@ -98,3 +98,38 @@ module.exports.getByFilter = function (min, max, callback) {
     var sqlQuery = "SELECT * FROM temps WHERE timestamp BETWEEN datetime(" + min / 1000 + ", 'unixepoch', '-14 days') AND datetime(" + max / 1000 + ",'unixepoch', 'localtime')";
     getByQuery(sqlQuery, callback);
 };
+
+module.exports.getNewerThanRowId = function (rowid, callback) {
+
+    var getByQuery2 = function (query, cb) {
+	db.all(query, function (err, rows) {
+            if (err !== null) {
+		// TODO Error handling
+		console.log('Error during sql query: ' + err);
+            } else {
+		var data = [];
+		console.log('Number of rows: ' + rows.length);
+		for (var i = 0; i < rows.length; i++) {
+                    data.push({
+			rowid: rows[i].rowid,
+			degreeCelsius: rows[i].temp,
+			sensorName: rows[i].ID,
+			timestamp: rows[i].timestamp
+                    });
+		}
+
+		cb(data);
+            }
+	});
+    };
+    
+    if (/^\+?(0|[1-9]\d*)$/.test(rowid)) {
+	var sqlQuery = "SELECT rowid, * FROM temps WHERE rowid > " + rowid + ";";
+	console.log('sql query: ' + sqlQuery);
+	getByQuery2(sqlQuery, callback);
+    }
+    else
+    {
+	return {"error:": "invalid rowid" + rowid};
+    }
+};
